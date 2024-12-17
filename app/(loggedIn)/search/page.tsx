@@ -11,6 +11,7 @@ const page = () => {
     return (
         <div className="font-poppins w-full">
         <h1 className="font-bold text-[2rem]">Search</h1>
+        <div className='text-sm text-stone-400 mt-1 italic'>Search the uploaded records.</div>
         <br />
         <div className='flex justify-between'>
             <Input 

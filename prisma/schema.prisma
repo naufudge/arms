@@ -16,19 +16,19 @@ datasource db {
 model Record {
   id Int @id @default(autoincrement())
   title String
-  subject String
+  subject String?
   description String
   creator String
-  publisher String
-  contributor String
+  publisher String?
+  contributor String?
   date DateTime
   type String
-  format String
-  identifier String
-  source String
-  language String
-  relation String
-  coverage String
+  format String?
+  identifier String?
+  source String?
+  language String?
+  relation String?
+  coverage String?
   rights String
   fileName String
   createdOn DateTime @default(now())
@@ -42,6 +42,7 @@ model User {
   password String
   email String
   disabled Boolean @default(false)
+  passChange Boolean @default(true)
   records Record[]
   collections Collection[]
   userRoleId Int
