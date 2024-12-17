@@ -27,9 +27,11 @@ export default function RootLayout({
       >
         <SidebarProvider>
           <AppSidebar />
-          <main>
+          <main className="w-full">
             <SidebarTrigger className="mx-5 mt-5" />
-            {children}
+            <div className="py-5 px-10">
+              {children}
+            </div>
           </main>
         </SidebarProvider>
       </body>
