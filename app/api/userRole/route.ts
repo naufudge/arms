@@ -1,11 +1,17 @@
+import { prisma } from "@/prisma/db_client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     try {
-        const reqBody = await request.json()
-
+        const { roleName } = await request.json()
+        const userRole = await prisma.userRole.create({
+            data: {
+                name: roleName,
+            }
+        })
         return NextResponse.json({
             success: true,
+            userRole
         })
     } catch (error: any) {
         return NextResponse.json({
