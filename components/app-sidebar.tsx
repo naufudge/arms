@@ -8,7 +8,6 @@ import {
     SidebarHeader,
     SidebarRail,
 } from "@/components/ui/sidebar"
-import { title } from 'process'
 import { Home, Search, Settings, Upload, Users } from 'lucide-react'
 import { UserPublic } from '@/lib/MyTypes';
 import { NavMain } from './nav-main';

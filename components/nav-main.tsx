@@ -33,7 +33,7 @@ export function NavMain({
 }) {
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
+            <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
             <SidebarMenu className="gap-3 my-4">
                 {items.map((item) => (
                     <div key={item.title}>

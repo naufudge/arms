@@ -14,9 +14,9 @@ const page = () => {
         <div className='text-sm text-stone-400 mt-1 italic'>Search the uploaded records.</div>
         <br />
         <div className='flex justify-between'>
-            <Input 
-            value={searchTerm} 
-            onChange={(e) => setSearchTerm(e.target.value)} 
+            <Input
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder='Search...'
             className='w-1/2 py-5 placeholder:opacity-40'
             />
