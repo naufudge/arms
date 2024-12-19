@@ -4,3 +4,8 @@ export type UserPublic = {
     userRole: string;
     avatar: string;
 }
+
+export type UserRole = {
+    id: number
+    name: string
+}

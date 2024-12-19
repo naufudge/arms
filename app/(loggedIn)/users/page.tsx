@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import {
@@ -28,25 +28,44 @@ import {
 } from "@/components/ui/table";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import axios from 'axios';
+import { UserRole } from '@prisma/client';
 
 
 const page = () => {
   const [addUserPopup, setAddUserPopup] = useState(false)
 
-  const [userRoles, setUserRoles] = useState([
-    {value: "admin", name: "Admin"},
-    {value: "uploader", name: "Uploader"},
-    {value: "search", name: "Search"},
-  ])
+  const [userRoles, setUserRoles] = useState<UserRole[]>()
 
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [role, setRole] = useState("")
 
+  useEffect(() => {
+    async function getRoles() {
+      try {
+        const response = await axios.get("/api/userRole")
+        if (response.data.success) setUserRoles(response.data.userRoles)
+      } catch (error: any) {
+        console.log(error.message)
+      }
+    }
+    if (!userRoles) getRoles()
+  }, [userRoles])
 
   const handleAddUser = async () => {
     try {
-      
+      if (!username) {
+        
+        return
+      } else if (!email) {
+
+        return
+      } else if (!role) {
+
+        return
+      }
+
     } catch (error: any) {
       console.log(error.message)
     }
@@ -84,12 +103,12 @@ const page = () => {
               <div className='flex flex-col gap-3'>
                 <Label htmlFor='role'>User Role</Label>
                 <Select onValueChange={(value) => setRole(value)}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger id='role' className="w-full">
                     <SelectValue placeholder="Select a Role" />
                   </SelectTrigger>
-                  <SelectContent id='role'>
-                    {userRoles.map((role, index) => (
-                      <SelectItem key={index} value={role.value}>{role.name}</SelectItem>
+                  <SelectContent>
+                    {userRoles?.map((role, index) => (
+                      <SelectItem key={index} value={role.id.toString()} className='hover:cursor-pointer'>{role.name.replace(/\w/, c => c.toUpperCase())}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -100,8 +119,9 @@ const page = () => {
         </Dialog>
 
       </div>
-      
+
       <div>
+            
 
       </div>
     </div>

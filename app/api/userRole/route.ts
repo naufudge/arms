@@ -23,7 +23,11 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
     try {
-        
+        const userRoles = await prisma.userRole.findMany()
+        return NextResponse.json({
+            success: true,
+            userRoles
+        })
     } catch (error: any) {
         return NextResponse.json({
             success: true,

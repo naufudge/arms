@@ -16,6 +16,7 @@ import axios from "axios";
 
 const page = () => {
     const [roleName, setRoleName] = useState("")
+    const [showAddUserRole, setShowAddUserRole] = useState(false)
 
     const handleRoleAdd = async () => {
         try {
@@ -35,8 +36,9 @@ const page = () => {
             <br />
 
             <div>
-                <Dialog>
-                    <DialogTrigger>Add User Role</DialogTrigger>
+                <Button onClick={() => setShowAddUserRole(!showAddUserRole)} className=''>Add a User Role</Button>
+                <Dialog open={showAddUserRole} onOpenChange={setShowAddUserRole}>
+                    {/* <DialogTrigger>Add User Role</DialogTrigger> */}
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>Add a User Role</DialogTitle>
