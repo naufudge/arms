@@ -8,23 +8,26 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from '@/components/ui/input';
 import axios from "axios";
 
 
-const page = () => {
+const Page = () => {
     const [roleName, setRoleName] = useState("")
     const [showAddUserRole, setShowAddUserRole] = useState(false)
 
     const handleRoleAdd = async () => {
         try {
             if (roleName) {
-                const response = await axios.post("/api/userRole", {roleName})
+                await axios.post("/api/userRole", {roleName})
             }
-        } catch (error: any) {
-            console.log(error.message)
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log(error.message);
+            } else {
+                console.log('An unknown error occurred');
+            }
         }
     }
 
@@ -58,4 +61,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

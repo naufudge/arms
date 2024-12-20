@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,6 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -29,53 +28,119 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import axios from 'axios';
-import { UserRole } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
+import { AlertBar } from '@/components/Alerts';
+import { capitalizeFirstLetter } from '@/lib/Helpers';
 
+type NewUsersType = User & {
+  userRole: UserRole
+}
 
-const page = () => {
+const Page = () => {
   const [addUserPopup, setAddUserPopup] = useState(false)
 
   const [userRoles, setUserRoles] = useState<UserRole[]>()
+  const [users, setUsers] = useState<NewUsersType[]>()
 
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [role, setRole] = useState("")
+
+  const [showAlert, setShowAlert] = useState(false)
+  const [alertType, setAlertType] = useState<"success" | "error">("error")
+  const [alertTitle, setAlertTitle] = useState("")
+  const [alertDescription, setAlertDescription] = useState("")
+
+  const [showPopupAlert, setShowPopupAlert] = useState(false)
+  const [popupAlertDescription, setPopupAlertDescription] = useState("")
+
+  async function getUsers() {
+    try {
+      const response = await axios.get("/api/user")
+      if (response.data.success) setUsers(response.data.users)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      } else {
+          console.log('An unknown error occurred');
+      }
+    }
+  }
 
   useEffect(() => {
     async function getRoles() {
       try {
         const response = await axios.get("/api/userRole")
         if (response.data.success) setUserRoles(response.data.userRoles)
-      } catch (error: any) {
-        console.log(error.message)
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.log(error.message);
+        } else {
+            console.log('An unknown error occurred');
+        }
       }
     }
+    if (!users) getUsers()
     if (!userRoles) getRoles()
-  }, [userRoles])
+  }, [userRoles, users])
 
   const handleAddUser = async () => {
-    try {
-      if (!username) {
-        
-        return
-      } else if (!email) {
+    if (!username) {
+      setPopupAlertDescription("Please enter a Username")
+      setShowPopupAlert(true)
+      return
+    } else if (!email || !email.includes("@")) {
+      setPopupAlertDescription("Please enter a valid Email")
+      setShowPopupAlert(true)
+      return
+    } else if (!role) {
+      setPopupAlertDescription("Please select a User Role")
+      setShowPopupAlert(true)
+      return
+    } else {
+      setShowPopupAlert(false)
 
-        return
-      } else if (!role) {
-
-        return
+      const data = {
+        username,
+        email,
+        userRoleId: parseInt(role)
       }
-
-    } catch (error: any) {
-      console.log(error.message)
+      try {
+        const response = await axios.post("/api/user", data)
+        if (response.data.success) {
+          setAlertType("success")
+          setAlertTitle("Success")
+          setAlertDescription(`Successfully created a new user! The user's initial password is: ${response.data.initialPassword}`)
+          setShowAlert(true)
+          await getUsers()
+        }
+        console.log(response.data)
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log(error.message);
+        } else {
+            console.log('An unknown error occurred');
+        }
+        setAlertType("error")
+        setAlertTitle("Error")
+        setAlertDescription("There was an error when creating user. Please try again!")
+        setShowAlert(true)
+      }
+      setAddUserPopup(false)
     }
   }
 
   return (
     <div className="font-poppins">
+
+      {/* <div className='absolute top-1'>
+        <User className='-z-10 opacity-10 w-[200px] h-[200px]' />
+      </div> */}
+      <AlertBar title={alertTitle} description={alertDescription} alertType={alertType} className={`mb-4 ${showAlert ? "" : "hidden"}`} />
+
       <div className='flex place-items-start justify-between'>
         <div className='flex flex-col place-items-start gap-2'>
-          <h1 className="font-bold text-[2rem]">User Management</h1>
+          <h1 className="font-bold text-[2rem]">Users Management</h1>
           <div className='text-sm text-stone-400 italic'>Manage existing users or add new users.</div>
         </div>
 
@@ -83,12 +148,16 @@ const page = () => {
         {/* Add User Dialog */}
         <Dialog open={addUserPopup} onOpenChange={setAddUserPopup}>
           <DialogContent className='p-7'>
+
+            <AlertBar title='Error!' description={popupAlertDescription} alertType={"error"} className={`mt-4 ${showPopupAlert ? "" : "hidden"}`} />
+
             <DialogHeader>
               <DialogTitle>Add New User</DialogTitle>
               <DialogDescription>
                 Fill the required information below to add a new user to the portal.
               </DialogDescription>
             </DialogHeader>
+
             <div className='flex flex-col gap-5'>
               <div className='flex flex-col gap-3'>
                 <Label htmlFor='username'>Username</Label>
@@ -108,7 +177,7 @@ const page = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {userRoles?.map((role, index) => (
-                      <SelectItem key={index} value={role.id.toString()} className='hover:cursor-pointer'>{role.name.replace(/\w/, c => c.toUpperCase())}</SelectItem>
+                      <SelectItem key={index} value={role.id.toString()} className='hover:cursor-pointer'>{capitalizeFirstLetter(role.name)}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -120,12 +189,36 @@ const page = () => {
 
       </div>
 
-      <div>
-            
+      <br />
 
+      <div>
+        {users ? 
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Username</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>User Role</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map((user, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{user.username}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{capitalizeFirstLetter(user.userRole.name)}</TableCell>
+                  <TableCell className="text-right">$250.00</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        :
+          <div className='text-center'>No users yet.</div>
+        }
       </div>
     </div>
   )
 }
 
-export default page
+export default Page

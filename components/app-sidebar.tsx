@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react'
+import React from 'react'
 import {
     Sidebar,
     SidebarContent,
@@ -9,9 +9,9 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar"
 import { Home, Search, Settings, Upload, Users } from 'lucide-react'
-import { UserPublic } from '@/lib/MyTypes';
-import { NavMain } from './nav-main';
-import { NavUser } from './nav-user';
+// import { UserPublic } from '@/lib/MyTypes';
+import { NavMain } from '@/components/nav-main';
+import { NavUser } from '@/components/nav-user';
 
 // Menu Items
 const menuItems = [
@@ -43,12 +43,19 @@ const menuItems = [
 ]
 
 export function AppSidebar() {
-    const [user, setUser] = useState<UserPublic>({
+    // const [user, setUser] = useState<UserPublic>({
+    //     username: "Nauf",
+    //     email: "nauf@gmail.com",
+    //     userRole: "Admin",
+    //     avatar: ""
+    // })
+
+    const user = {
         username: "Nauf",
         email: "nauf@gmail.com",
         userRole: "Admin",
         avatar: ""
-    })
+    }
 
     return (
         <Sidebar collapsible="icon" className='font-poppins'>

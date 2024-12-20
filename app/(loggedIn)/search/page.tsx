@@ -6,7 +6,7 @@ import { Filter, Upload } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react'
 
-const page = () => {
+const Page = () => {
     const [searchTerm, setSearchTerm] = useState("")
     return (
         <div className="font-poppins w-full">
@@ -33,4 +33,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

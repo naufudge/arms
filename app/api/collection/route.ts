@@ -1,17 +1,17 @@
 import { prisma } from "@/prisma/db_client";
+import { Collection } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+
 
 export async function POST(request: NextRequest) {
     try {
-        const { roleName } = await request.json()
-        const userRole = await prisma.userRole.create({
-            data: {
-                name: roleName,
-            }
+        const reqBody: Collection = await request.json()
+        const response = await prisma.collection.create({
+            data: reqBody
         })
         return NextResponse.json({
             success: true,
-            userRole
+            data: response
         })
     } catch (error: unknown) {
         let errorMessage = ""
@@ -27,12 +27,13 @@ export async function POST(request: NextRequest) {
     }
 }
 
+// Get all the existing Collections
 export async function GET() {
     try {
-        const userRoles = await prisma.userRole.findMany()
+        const collections = await prisma.collection.findMany()
         return NextResponse.json({
             success: true,
-            userRoles
+            collections
         })
     } catch (error: unknown) {
         let errorMessage = ""
