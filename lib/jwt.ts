@@ -1,13 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { jwtVerify } from 'jose';
+import { UserTokenType } from '@/lib/MyTypes';
 
-type UserTokenType = {
-    id: number,
-    username: string,
-    email: string,
-    loyalty_points: number,
-    role: string
-}
 
 const JWT_SECRET = process.env.TOKEN_SECRET;
 

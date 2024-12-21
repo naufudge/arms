@@ -4,7 +4,7 @@ import {
     Bell,
     ChevronsUpDown,
     LogOut,
-    User,
+    User as UserIcon,
 } from "lucide-react"
 import {
     Avatar,
@@ -26,14 +26,33 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
-import { UserPublic } from "@/lib/MyTypes"
+import axios from "axios"
+import { UserTokenType } from "@/lib/MyTypes"
 
 export function NavUser({
     user,
 }: {
-    user: UserPublic
+    user: UserTokenType
 }) {
     const { isMobile } = useSidebar()
+
+    const handleLogout = async () => {
+        try {
+            const response = await axios.get("/api/user/logout")
+
+            if (response.data.success) {
+                location.reload()
+            } else {
+                console.log("Failed to log out.")
+            }
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error(error.message)
+            } else {
+                console.error("An unknown error occurred.")
+            }
+        }
+    }
 
     return (
         <SidebarMenu>
@@ -45,9 +64,10 @@ export function NavUser({
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
                             <Avatar className="h-8 w-8 rounded-lg">
-                                <AvatarImage src={user.avatar} alt={user.username} />
-                                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                <AvatarImage src="" alt={user.username} />
+                                <AvatarFallback className="rounded-lg">{user.username[0].toUpperCase()}</AvatarFallback>
                             </Avatar>
+                            
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-semibold">{user.username}</span>
                                 <span className="truncate text-xs">{user.email}</span>
@@ -63,10 +83,12 @@ export function NavUser({
                     >
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+
                                 <Avatar className="h-8 w-8 rounded-lg">
-                                    <AvatarImage src={user.avatar} alt={user.username} />
-                                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                    <AvatarImage src="" alt={user.username} />
+                                    <AvatarFallback className="rounded-lg">{user.username[0].toUpperCase()}</AvatarFallback>
                                 </Avatar>
+
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-semibold">{user.username}</span>
                                     <span className="truncate text-xs">{user.email}</span>
@@ -76,18 +98,26 @@ export function NavUser({
                         
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <User />
+                            <DropdownMenuItem
+                            className="hover:cursor-pointer"
+                            >
+                                <UserIcon />
                                 Profile
                             </DropdownMenuItem>
                             
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                            className="hover:cursor-pointer"
+                            >
                                 <Bell />
                                 Notifications
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
+
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+
+                        <DropdownMenuItem
+                        className="hover:cursor-pointer hover:bg-red-50 hover:text-red-500 text-red-500 font-semibold transtion-all duration-200"
+                        onClick={handleLogout}>
                             <LogOut />
                             Log out
                         </DropdownMenuItem>

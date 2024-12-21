@@ -9,3 +9,10 @@ export type UserRole = {
     id: number
     name: string
 }
+
+export type UserTokenType = {
+    id: string,
+    username: string,
+    email: string,
+    userRoleId: number
+}

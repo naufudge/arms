@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -130,6 +130,10 @@ const Page = () => {
     }
   }
 
+  const handleResetPassword = async (username: string) => {
+    console.log(username)
+  }
+
   return (
     <div className="font-poppins">
 
@@ -186,11 +190,10 @@ const Page = () => {
             </div>
           </DialogContent>
         </Dialog>
-
       </div>
 
       <br />
-
+      {/* Users table */}
       <div>
         {users ? 
           <Table>
@@ -199,7 +202,7 @@ const Page = () => {
                 <TableHead>Username</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>User Role</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -208,7 +211,14 @@ const Page = () => {
                   <TableCell className="font-medium">{user.username}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{capitalizeFirstLetter(user.userRole.name)}</TableCell>
-                  <TableCell className="text-right">$250.00</TableCell>
+                  <TableCell>
+                    <div className='flex gap-2'>
+                      <RotateCcw
+                      onClick={() => handleResetPassword(user.username)}
+                      className='hover:cursor-pointer hover:text-blue-500 transition-all duration-200'
+                      />
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

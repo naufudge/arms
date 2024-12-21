@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
     Sidebar,
     SidebarContent,
@@ -9,9 +9,10 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar"
 import { Home, Search, Settings, Upload, Users } from 'lucide-react'
-// import { UserPublic } from '@/lib/MyTypes';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
+import axios from 'axios';
+import { UserTokenType } from '@/lib/MyTypes';
 
 // Menu Items
 const menuItems = [
@@ -43,19 +44,24 @@ const menuItems = [
 ]
 
 export function AppSidebar() {
-    // const [user, setUser] = useState<UserPublic>({
-    //     username: "Nauf",
-    //     email: "nauf@gmail.com",
-    //     userRole: "Admin",
-    //     avatar: ""
-    // })
+    const [user, setUser] = React.useState<UserTokenType>()
 
-    const user = {
-        username: "Nauf",
-        email: "nauf@gmail.com",
-        userRole: "Admin",
-        avatar: ""
-    }
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await axios.get("/api/user/me")
+                if (response.data.success) setUser(response.data.user)
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    console.error(error.message)
+                } else {
+                    console.error("An unknown error occurred.")
+                }
+            }
+        }
+
+        if (!user) getUser()
+    }, [user])
 
     return (
         <Sidebar collapsible="icon" className='font-poppins'>
@@ -64,7 +70,7 @@ export function AppSidebar() {
                 <NavMain items={menuItems} />
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={user} />
+                { user && <NavUser user={user} /> }
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>

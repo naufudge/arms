@@ -1,12 +1,11 @@
 import { prisma } from "@/prisma/db_client";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import { generateRandomPassword } from "@/lib/Helpers";
+import axios from "axios";
+
 
 export async function POST(request: NextRequest) {
-    const { username } = await request.json()
-
-    const newPassword = generateRandomPassword();
+    const { username, newPassword } = await request.json()
 
     try {
         const user = await prisma.user.findUnique({ where: { username } })
@@ -24,13 +23,22 @@ export async function POST(request: NextRequest) {
             where: { username },
             data: { 
                 password: hashedPassword,
-                passChange: true
+                passChange: false
             }
         });
 
+        const response = await axios.post("/api/user/login", { username, password: newPassword })
+
+        if (response.data.success === false) {
+            return NextResponse.json({
+                success: false,
+                error: response.data.error
+            });
+        }
+
         return NextResponse.json({
             success: true,
-            message: "Password reset success!"
+            message: "Password updated successfully"
         });
 
     } catch (error: unknown) {

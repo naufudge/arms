@@ -12,12 +12,10 @@ import {
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { User } from '@prisma/client';
+// import { User } from '@prisma/client';
 import { AlertBar } from '@/components/Alerts';
 import axios from 'axios';
 
-// username: admin
-// password: TAp3YvJaLu**
 
 const Page = () => {
     const [username, setUsername] = useState("")
@@ -28,7 +26,7 @@ const Page = () => {
     const [alertTitle, setAlertTitle] = useState("")
     const [alertDescription, setAlertDescription] = useState("")
 
-    const [user, setUser] = useState<User | null | undefined>()
+    // const [user, setUser] = useState<User | null | undefined>()
 
     const [showPassChange, setShowPassChange] = useState(false)
 
@@ -62,15 +60,23 @@ const Page = () => {
             const response = await axios.post("/api/user", { username, password })
 
             if (response.data.success === false) {
+                // if the username or password is incorrect
                 showError()
                 return
             } else if (response.data.success === true && response.data.passChange === false) {
-                setUser(response.data.user)
-
-                showSuccess()
-                return
+                // if the username and password is correct, and the user doesn't need to change their password
+                // setUser(response.data.user)
+                const loginResponse = await axios.post("/api/user/login", { username, password })
+                if (loginResponse.data.success === true) {
+                    showSuccess()
+                    location.reload()
+                } else {
+                    showError("An error occurred. Please try again.")
+                }
+                return;
             } else if (response.data.success === true && response.data.passChange === true) {
-                setUser(response.data.user)
+                // if the username and password is correct, and the user has to change their password
+                // setUser(response.data.user)
                 setShowAlert(false)
                 setShowPassChange(true)
                 return
@@ -97,7 +103,7 @@ const Page = () => {
                 return
             }
 
-            const response = await axios.post("/api/user/reset", { username, newPassword })
+            const response = await axios.post("/api/user/changePass", { username, newPassword })
 
             if (response.data.success === false) {
                 showError("An error occurred. Please try again.")

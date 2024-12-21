@@ -1,13 +1,10 @@
 import { prisma } from "@/prisma/db_client";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import { generateRandomPassword } from "@/lib/Helpers";
+import { createToken } from "@/lib/jwt";
 
 export async function POST(request: NextRequest) {
-    const { username } = await request.json()
-
-    const newPassword = generateRandomPassword();
-
+    const { username, password } = await request.json()
     try {
         const user = await prisma.user.findUnique({ where: { username } })
 
@@ -18,20 +15,31 @@ export async function POST(request: NextRequest) {
             });
         }
 
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const validPassword = await bcrypt.compare(password, user.password)
 
-        await prisma.user.update({
-            where: { username },
-            data: { 
-                password: hashedPassword,
-                passChange: true
-            }
-        });
+        if (!validPassword) {
+            return NextResponse.json({
+                success: false,
+                error: "Invalid password"
+            });
+        }
 
-        return NextResponse.json({
+        const token = createToken({ 
+            id: user.id,
+            username: user.username, 
+            email: user.email,
+            userRoleId: user.userRoleId
+        })
+
+        const response = NextResponse.json({
             success: true,
-            message: "Password reset success!"
-        });
+            message: "Login Successful!",
+            token
+        })
+
+        response.cookies.set("token", token, { httpOnly: true, maxAge: 3600 })
+
+        return response;
 
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -46,5 +54,4 @@ export async function POST(request: NextRequest) {
             })
         }
     }
-    
 }
