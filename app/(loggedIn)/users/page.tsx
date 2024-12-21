@@ -56,7 +56,7 @@ const Page = () => {
 
   async function getUsers() {
     try {
-      const response = await axios.get("/api/user")
+      const response = await axios.get("/api/users")
       if (response.data.success) setUsers(response.data.users)
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -106,7 +106,7 @@ const Page = () => {
         userRoleId: parseInt(role)
       }
       try {
-        const response = await axios.post("/api/user", data)
+        const response = await axios.post("/api/users", data)
         if (response.data.success) {
           setAlertType("success")
           setAlertTitle("Success")
