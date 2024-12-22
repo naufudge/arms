@@ -32,7 +32,7 @@ export function NavMain({
     }[]
 }) {
     return (
-        <SidebarGroup>
+        <SidebarGroup className="transition-all duration-200">
             <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
             <SidebarMenu className="gap-3 my-4">
                 {items.map((item) => (
@@ -53,11 +53,11 @@ export function NavMain({
                                         </SidebarMenuButton>
                                     </CollapsibleTrigger>
                                     <CollapsibleContent>
-                                        <SidebarMenuSub>
+                                        <SidebarMenuSub className="gap-2 mt-2">
                                             {item.items?.map((subItem) => (
                                                 <SidebarMenuSubItem key={subItem.title}>
                                                     <SidebarMenuSubButton asChild>
-                                                        <a href={subItem.url}>
+                                                        <a href={subItem.url} className="text-[0.79rem]">
                                                             <span>{subItem.title}</span>
                                                         </a>
                                                     </SidebarMenuSubButton>

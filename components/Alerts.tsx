@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/alert"
 
 interface AlertBarProps extends React.HTMLProps<HTMLDivElement> {
-    // variant?: "default" | "destructive" | null | undefined;
     alertType: "success" | "error"
     description: string;
     title: string;

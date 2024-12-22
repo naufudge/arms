@@ -25,6 +25,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import axios from 'axios';
@@ -62,7 +68,7 @@ const Page = () => {
       if (error instanceof Error) {
         console.log(error.message);
       } else {
-          console.log('An unknown error occurred');
+        console.log('An unknown error occurred');
       }
     }
   }
@@ -76,7 +82,7 @@ const Page = () => {
         if (error instanceof Error) {
           console.log(error.message);
         } else {
-            console.log('An unknown error occurred');
+          console.log('An unknown error occurred');
         }
       }
     }
@@ -117,9 +123,9 @@ const Page = () => {
         console.log(response.data)
       } catch (error: unknown) {
         if (error instanceof Error) {
-            console.log(error.message);
+          console.log(error.message);
         } else {
-            console.log('An unknown error occurred');
+          console.log('An unknown error occurred');
         }
         setAlertType("error")
         setAlertTitle("Error")
@@ -195,7 +201,7 @@ const Page = () => {
       <br />
       {/* Users table */}
       <div>
-        {users ? 
+        {users ?
           <Table>
             <TableHeader>
               <TableRow>
@@ -213,17 +219,26 @@ const Page = () => {
                   <TableCell>{capitalizeFirstLetter(user.userRole.name)}</TableCell>
                   <TableCell>
                     <div className='flex gap-2'>
-                      <RotateCcw
-                      onClick={() => handleResetPassword(user.username)}
-                      className='hover:cursor-pointer hover:text-blue-500 transition-all duration-200'
-                      />
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <RotateCcw
+                              onClick={() => handleResetPassword(user.username)}
+                              className='hover:cursor-pointer hover:text-primary text-stone-600 transition-all duration-200'
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Reset Password</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        :
+          :
           <div className='text-center'>No users yet.</div>
         }
       </div>

@@ -39,7 +39,11 @@ const menuItems = [
     {
         title: "Settings",
         url: "/settings",
-        icon: Settings
+        icon: Settings,
+        items: [
+            {title: "Add User Role", url: "/settings/add_role"},
+            {title: "Add a Collection", url: "/settings/add_collection"},
+        ]
     },
 ]
 

@@ -41,7 +41,6 @@ const Page = () => {
             <div>
                 <Button onClick={() => setShowAddUserRole(!showAddUserRole)} className=''>Add a User Role</Button>
                 <Dialog open={showAddUserRole} onOpenChange={setShowAddUserRole}>
-                    {/* <DialogTrigger>Add User Role</DialogTrigger> */}
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>Add a User Role</DialogTitle>
