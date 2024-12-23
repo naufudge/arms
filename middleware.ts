@@ -27,6 +27,8 @@ export const config = {
         '/',
         '/login',
         '/settings',
+        '/settings/roles',
+        '/settings/collections',
         '/search',
         '/upload',
         '/users',

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { UserRole } from '@prisma/client';
+import { Collection, UserRole } from '@prisma/client';
 import { capitalizeFirstLetter } from '@/lib/Helpers';
 import { UserTokenType } from '@/lib/MyTypes';
 import { AlertBar } from '@/components/Alerts';
@@ -33,35 +33,57 @@ interface IndividualSettingPageProps {
 interface ManageRolePageProps {
     userRoles: UserRole[] | undefined | null;
     showAlert: boolean;
-    setShowAlert: Dispatch<SetStateAction<boolean>>;
     alertType: "success" | "error";
-    setAlertType: Dispatch<SetStateAction<"success" | "error">>;
     alertTitle: string;
-    setAlertTitle: Dispatch<SetStateAction<string>>;
     alertDescription: string;
-    setAlertDescription: Dispatch<SetStateAction<string>>;
+    showError: (description: string) => void;
+    showSuccess: (description: string) => void;
 }
 
 interface ManageCollectionPageProps {
-
+    collections: Collection[] | undefined | null;
+    user: UserTokenType | undefined;
+    showAlert: boolean;
+    alertType: "success" | "error";
+    alertTitle: string;
+    alertDescription: string;
+    showError: (description: string) => void;
+    showSuccess: (description: string) => void;
 }
 
 const IndividualSettingPage = ({ params }: { params: Promise<IndividualSettingPageProps> }) => {
     const [setting, setSetting] = useState<string | null>(null);
-    const [userRoles, setUserRoles] = useState<UserRole[] | undefined | null>();
     const [user, setUser] = useState<UserTokenType>()
+
+    const [userRoles, setUserRoles] = useState<UserRole[] | undefined | null>();
+    const [collections, setCollections] = useState<Collection[] | undefined | null>();
 
     const [showAlert, setShowAlert] = useState(false)
     const [alertType, setAlertType] = useState<"success" | "error">("error")
     const [alertTitle, setAlertTitle] = useState("")
     const [alertDescription, setAlertDescription] = useState("")
 
+    const showError = (description: string) => {
+        setAlertType("error")
+        setAlertTitle("Error")
+        setAlertDescription(description)
+        setShowAlert(true)
+    }
+    const showSuccess = (description: string) => {
+        setAlertType("success")
+        setAlertTitle("Success")
+        setAlertDescription(description)
+        setShowAlert(true)
+    }
+
     async function getUser() {
         try {
             const response = await axios.get("/api/user/me")
+
             if (response.data.success) {
                 setUser(response.data.user)
             } else { console.log("Failed to fetch user.") }
+
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.log(error.message)
@@ -74,6 +96,7 @@ const IndividualSettingPage = ({ params }: { params: Promise<IndividualSettingPa
     async function getUserRoles() {
         try {
             const response = await axios.get("/api/userRole")
+
             if (response.data.success) {
                 setUserRoles(response.data.userRoles)
             } else { console.log("Failed to fetch user roles.") }
@@ -88,6 +111,15 @@ const IndividualSettingPage = ({ params }: { params: Promise<IndividualSettingPa
     async function getCollections() {
         try {
             const response = await axios.get("/api/collection")
+
+            if (response.data.success) {
+                setCollections(response.data.collections)
+                console.log(response.data.collections)
+            } else {
+                console.log("Failed to fetch collections.")
+                setCollections(null)
+            }
+
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.log(error.message)
@@ -104,7 +136,8 @@ const IndividualSettingPage = ({ params }: { params: Promise<IndividualSettingPa
     useEffect(() => {
         if (!user) getUser();
         if (!userRoles) getUserRoles();
-    }, [user, userRoles])
+        if (!collections) getCollections();
+    }, [user, userRoles, collections])
 
     switch (setting) {
         case "roles":
@@ -112,18 +145,27 @@ const IndividualSettingPage = ({ params }: { params: Promise<IndividualSettingPa
                 <ManageRolePage
                     userRoles={userRoles}
                     showAlert={showAlert}
-                    setShowAlert={setShowAlert}
                     alertType={alertType}
-                    setAlertType={setAlertType}
                     alertTitle={alertTitle}
-                    setAlertTitle={setAlertTitle}
                     alertDescription={alertDescription}
-                    setAlertDescription={setAlertDescription}
+                    showError={showError}
+                    showSuccess={showSuccess}
                 />
             )
 
         case "collections":
-            return <ManageCollectionPage />
+            return (
+                <ManageCollectionPage
+                    collections={collections}
+                    user={user}
+                    showAlert={showAlert}
+                    alertType={alertType}
+                    alertTitle={alertTitle}
+                    alertDescription={alertDescription}
+                    showError={showError}
+                    showSuccess={showSuccess}
+                />
+            )
 
         default:
             return <div>{setting}</div>
@@ -131,47 +173,30 @@ const IndividualSettingPage = ({ params }: { params: Promise<IndividualSettingPa
 }
 
 // Add Role Page Component
-const ManageRolePage: React.FC<ManageRolePageProps> = ({ 
-    userRoles, 
+const ManageRolePage: React.FC<ManageRolePageProps> = ({
+    userRoles,
     showAlert,
-    setShowAlert, 
     alertType,
-    setAlertType,
     alertTitle,
-    setAlertTitle,
     alertDescription,
-    setAlertDescription
+    showError,
+    showSuccess
 }) => {
     const [roleName, setRoleName] = useState("")
-
-    const showError = (description: string = "There was an error while creating the user role. Please try again!") => {
-        setAlertType("error")
-        setAlertTitle("Error")
-        setAlertDescription(description)
-        setShowAlert(true)
-    }
-
-    const showSuccess = () => {
-        setAlertType("success")
-        setAlertTitle("Success")
-        setAlertDescription("Successfully created the user role!")
-        setShowAlert(true)
-    }
-
 
     const handleRoleAdd = async () => {
         try {
             if (roleName) {
                 const response = await axios.post("/api/userRole", { roleName })
                 if (response.data.success) {
-                    showSuccess()
-                } else { showError() }
+                    showSuccess("Successfully created the user role!")
+                } else { showError("There was an error while creating the user role. Please try again!") }
             } else {
                 showError("Please enter a role name")
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
-                showError()
+                showError("There was an error while creating the user role. Please try again!")
             } else {
                 showError('An unknown error occurred. Please try again!');
             }
@@ -233,31 +258,80 @@ const ManageRolePage: React.FC<ManageRolePageProps> = ({
     )
 }
 
-const ManageCollectionPage = () => {
+// Manage collections component
+const ManageCollectionPage: React.FC<ManageCollectionPageProps> = ({
+    collections,
+    user,
+    showAlert,
+    alertType,
+    alertTitle,
+    alertDescription,
+    showError,
+    showSuccess
+}) => {
     const [collectionName, setCollectionName] = useState("")
     const [collectionDescription, setCollectionDescription] = useState("")
 
     const handleCollectionAdd = async () => {
-        if (!collectionName || !collectionDescription) {
-
+        if (!collectionName) {
+            showError("Please enter a collection name.")
+            return;
         }
-        try {
-            
-        } catch (error: unknown) {
 
+        try {
+            const response = await axios.post("/api/collection", { name: collectionName, description: collectionDescription, userId: user?.id })
+            if (response.data.success) {
+                showSuccess("Successfully created the collection!")
+                setCollectionName("")
+                setCollectionDescription("")
+            } else {
+                showError("There was an error while creating the collection. Please try again!")
+            }
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                showError("There was an error while creating the collection. Please try again!")
+            } else {
+                showError('An unknown error occurred. Please try again!');
+            }
         }
     }
 
     return (
         <div className='font-poppins grid grid-cols-3 gap-8'>
             <div className='col-span-full'>
+                <AlertBar alertType={alertType} title={alertTitle} description={alertDescription} className={`mb-5 ${showAlert ? "" : "hidden"}`} />
                 <h1 className='font-bold text-[2rem]'>Add a Collection</h1>
                 <div className='text-sm text-stone-400 mt-1 italic'>Add a new collection to upload records, or manage existing collections.</div>
             </div>
 
             {/* Collections table */}
             <div className='col-span-2'>
-                
+                {collections && collections.length === 0 ?
+                    <div className='text-stone-400 text-center'>No collections found.</div>
+                    : !collections ?
+                        <div>Loading...</div>
+                        :
+                        <Table className=''>
+                            <TableHeader>
+                                <TableRow className='font-semibold'>
+                                    <TableHead>#</TableHead>
+                                    <TableHead>Collection Name</TableHead>
+                                    <TableHead>Description</TableHead>
+                                    <TableHead>Action</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {collections.map((collection) => (
+                                    <TableRow key={collection.id}>
+                                        <TableCell>{collection.id}</TableCell>
+                                        <TableCell>{capitalizeFirstLetter(collection.name)}</TableCell>
+                                        <TableCell>{collection.description}</TableCell>
+                                        <TableCell>View</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                }
             </div>
 
             {/* Add Collection Card */}
@@ -277,7 +351,7 @@ const ManageCollectionPage = () => {
                             <Input id='collectionDescription' onChange={(e) => setCollectionDescription(e.target.value)} placeholder='Description' />
                         </div>
                         <br />
-                        <Button onClick={handleCollectionAdd}>Add Collection</Button>
+                        <Button onClick={handleCollectionAdd} disabled={user ? false : true}>Add Collection</Button>
                     </CardContent>
                     <CardFooter />
                 </Card>
