@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
             errorMessage = 'An unknown error occurred';
         }
         return NextResponse.json({
-            success: true,
+            success: false,
             error: errorMessage
         })
     }
@@ -42,7 +42,7 @@ export async function GET() {
             errorMessage = 'An unknown error occurred';
         }
         return NextResponse.json({
-            success: true,
+            success: false,
             error: errorMessage
         })
     }
