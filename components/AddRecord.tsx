@@ -74,9 +74,9 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile }) => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
-    
     await uploadFile();
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7">

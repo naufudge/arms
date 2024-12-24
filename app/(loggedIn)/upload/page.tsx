@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator"
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import AddRecord from '@/components/AddRecord';
-import { CheckCircle2Icon, Upload } from 'lucide-react';
+import { CheckCircle2Icon, ClockArrowUp, Loader2, Upload } from 'lucide-react';
 import Image from 'next/image';
 
 
@@ -26,7 +26,6 @@ const Page = () => {
   const [file, setFile] = useState<File>();
   const [url, setUrl] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [uploadedPDF, setUploadedPDF] = useState<boolean>(false);
 
   async function getCollections() {
     try {
@@ -55,8 +54,9 @@ const Page = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setFile(e.target?.files?.[0]);
-	};
+    const thisFile = e.target?.files?.[0]
+    setFile(thisFile);
+  };
 
   const uploadFile = async () => {
     if (!file) {
@@ -79,7 +79,7 @@ const Page = () => {
         body: JSON.stringify({ cid: upload.cid }),
       });
       const signedResponse = await signRequest.json();
-      setUploadedPDF(file.name.endsWith(".pdf"));
+
       setUrl(signedResponse);
       setUploading(false);
     } catch (e) {
@@ -126,14 +126,36 @@ const Page = () => {
                 <input id='fileInput' type='file' className='hidden' onChange={handleFileChange} />
                 <Button onClick={handleFileInputClick} className='w-fit'><Upload /> Choose a file</Button>
 
-                {/* Display file name after user chooses a file */}
-                {file && <div className='text-stone-400 text-sm flex place-items-center gap-2 w-fit'><CheckCircle2Icon color='green' /> {file.name}</div>}
                 {/* Display the uploaded file after uploading successfully */}
-                {url && !uploadedPDF ? 
-                  <Image src={url} alt="Image from Pinata" width={500} height={0} />
-                : url && uploadedPDF &&
+                {file && file.type === "application/pdf" && url &&
                   // Display PDF in an iframe 
                   <iframe src={url} width="100%" height="500px" style={{ border: 'none' }} />
+                }
+
+                {file && file.type.startsWith('image/') &&
+                  <Image src={URL.createObjectURL(file)} alt={file.name} width={450} height={0} />
+                }
+
+                {file && file.type.startsWith('audio/') &&
+                  <audio controls>
+                    <source src={URL.createObjectURL(file)} type={file.type} />
+                    Your browser does not support the audio element.
+                  </audio>
+                }
+
+                {file && file.type.startsWith('video/') &&
+                  <video controls width="450">
+                    <source src={URL.createObjectURL(file)} type={file.type} />
+                    Your browser does not support the video element.
+                  </video>
+                }
+
+                {/* Display file name after user chooses a file */}
+                {file &&
+                  <div className='text-stone-400 text-sm flex place-items-center justify-center gap-2'>
+                    {url ? <CheckCircle2Icon color='green' /> : uploading ? <Loader2 className='animate-spin' /> : <ClockArrowUp className='text-yellow-500' />}
+                    <p className='truncate max-w-[450px]'>{file.name}</p>
+                  </div>
                 }
               </div>
             </div>
