@@ -34,6 +34,8 @@ model Record {
   createdOn DateTime @default(now())
   userId String
   user User @relation(fields: [userId], references: [id])
+  collectionId Int
+  collection Collection @relation(fields: [collectionId], references: [id])
 }
 
 model User {
@@ -56,6 +58,7 @@ model Collection {
   createdOn DateTime @default(now())
   userId String
   user User @relation(fields: [userId], references: [id])
+  records Record[]
 }
 
 model UserRole {

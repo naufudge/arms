@@ -13,3 +13,22 @@ export function generateRandomPassword(length: number = 12): string {
 export function capitalizeFirstLetter(word: string): string {
   return word.replace(/\w/, c => c.toUpperCase())
 }
+
+export async function checkIfPDF(ipfsUrl: string) {
+  try {
+    const response = await fetch(ipfsUrl, {
+      method: 'HEAD',
+    });
+
+    // Check for the MIME type
+    const contentType = response.headers.get('Content-Type');
+    if (!contentType) {
+      // console.error('No content type found');
+      return false;
+    }
+    return contentType.includes('application/pdf');
+  } catch (error) {
+    // console.error('Error checking content type:', error);
+    return false;
+  }
+};

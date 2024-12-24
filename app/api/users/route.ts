@@ -1,4 +1,4 @@
-import { generateRandomPassword } from "@/lib/Helpers";
+import { generateRandomPassword } from "@/utils/Helpers";
 import { prisma } from "@/prisma/db_client";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";

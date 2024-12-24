@@ -21,7 +21,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Collection, UserRole } from '@prisma/client';
-import { capitalizeFirstLetter } from '@/lib/Helpers';
+import { capitalizeFirstLetter } from '@/utils/Helpers';
 import { UserTokenType } from '@/lib/MyTypes';
 import { AlertBar } from '@/components/Alerts';
 

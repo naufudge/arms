@@ -36,7 +36,7 @@ import { Label } from '@/components/ui/label';
 import axios from 'axios';
 import { User, UserRole } from '@prisma/client';
 import { AlertBar } from '@/components/Alerts';
-import { capitalizeFirstLetter } from '@/lib/Helpers';
+import { capitalizeFirstLetter } from '@/utils/Helpers';
 
 type NewUsersType = User & {
   userRole: UserRole

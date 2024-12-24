@@ -1,7 +1,7 @@
 import { prisma } from "@/prisma/db_client";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import { generateRandomPassword } from "@/lib/Helpers";
+import { generateRandomPassword } from "@/utils/Helpers";
 
 export async function POST(request: NextRequest) {
     const { username } = await request.json()
