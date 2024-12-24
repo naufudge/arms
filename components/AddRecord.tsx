@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -47,10 +46,11 @@ const formSchema = z.object({
 
 
 interface AddRecordProps {
-
+  uploading: boolean;
+  uploadFile: () => Promise<void>;
 }
 
-const AddRecord: React.FC<AddRecordProps> = () => {
+const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -74,6 +74,8 @@ const AddRecord: React.FC<AddRecordProps> = () => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
+    
+    await uploadFile();
   }
   return (
     <Form {...form}>
@@ -344,7 +346,7 @@ const AddRecord: React.FC<AddRecordProps> = () => {
           )}
         />
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={uploading}>Submit</Button>
       </form>
     </Form>
   )

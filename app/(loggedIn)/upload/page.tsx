@@ -12,13 +12,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator"
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import AddRecord from '@/components/AddRecord';
 import { CheckCircle2Icon, Upload } from 'lucide-react';
 import Image from 'next/image';
-import { checkIfPDF } from '@/utils/Helpers';
-import AddRecord from '@/components/AddRecord';
 
 
 const Page = () => {
@@ -148,7 +146,7 @@ const Page = () => {
                   <p className='text-sm italic text-stone-400'>Fill in the metadata information of the file.</p>
                 </div>
 
-                <AddRecord />
+                <AddRecord uploadFile={uploadFile} uploading={uploading} />
               </div>
               {/* <Button className='' disabled={uploading} onClick={uploadFile}>
                 {uploading ? "Uploading..." : "Upload"}

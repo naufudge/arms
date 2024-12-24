@@ -4,7 +4,14 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   images: {
-    domains: ['green-random-goat-375.mypinata.cloud'], // Add your external hostname here
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'green-random-goat-375.mypinata.cloud',
+        port: '',
+        pathname: '/**',
+      },
+    ],  
   },
 };
 
