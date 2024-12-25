@@ -58,6 +58,7 @@ const Page = () => {
     setFile(thisFile);
   };
 
+  // Function that handles the file uploading process
   const uploadFile = async () => {
     if (!file) {
       alert("No file selected");
@@ -82,6 +83,7 @@ const Page = () => {
 
       setUrl(signedResponse);
       setUploading(false);
+      
     } catch (e) {
       console.log(e);
       setUploading(false);

@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator';
 import { Filter, Upload } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react'
@@ -25,7 +26,10 @@ const Page = () => {
                 <Button className='h-full'><Upload/> <Link href={"/upload"}>Upload</Link></Button>
             </div>
         </div>
-
+        
+        <Separator className='my-10' />
+        
+        {/* Records Table */}
         <div>
 
         </div>
