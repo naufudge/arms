@@ -25,6 +25,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import axios from 'axios'
+import { UserTokenType } from '@/lib/MyTypes'
 
 const formSchema = z.object({
   title: z.string().min(5, { message: "Title must be between 5 to 50 characters" }).max(50),
@@ -47,10 +49,12 @@ const formSchema = z.object({
 
 interface AddRecordProps {
   uploading: boolean;
-  uploadFile: () => Promise<void>;
+  uploadFile: () => Promise<string | undefined>;
+  selectedCollectionId: number;
+  user: UserTokenType | undefined;
 }
 
-const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile }) => {
+const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCollectionId, user }) => {  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -73,8 +77,28 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile }) => {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    await uploadFile();
+    if (!user || !selectedCollectionId) {
+      return
+    }
+    
+    const ccid = await uploadFile();
+    
+    if (ccid) {
+      const data = {
+        ...values,
+        date: new Date(values.date),
+        fileId: ccid,
+        collectionId: selectedCollectionId,
+        userId: user.id
+      }
+      
+      const response = await axios.post("/api/record", data)
+      if (response.data.success) {
+        alert("Record added successfully.")
+      } else {
+        alert("Failed to add record.")
+      }
+    }
   }
 
   return (

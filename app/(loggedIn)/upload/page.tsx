@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react'
-import { Collection } from '@prisma/client';
+import { Collection, User } from '@prisma/client';
 import { pinata } from "@/utils/config";
 import axios from 'axios';
 import {
@@ -17,11 +17,14 @@ import { Button } from '@/components/ui/button';
 import AddRecord from '@/components/AddRecord';
 import { CheckCircle2Icon, ClockArrowUp, Loader2, Upload } from 'lucide-react';
 import Image from 'next/image';
+import { UserTokenType } from '@/lib/MyTypes';
 
 
 const Page = () => {
   const [collections, setCollections] = useState<Collection[] | undefined | null>();
   const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
+
+  const [user, setUser] = useState<UserTokenType>();
 
   const [file, setFile] = useState<File>();
   const [url, setUrl] = useState("");
@@ -45,9 +48,22 @@ const Page = () => {
     }
   }
 
+  async function getUser() {
+    try {
+      const response = await axios.get("/api/user/me")
+      if (response.data.success) setUser(response.data.user)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error.message)
+      } else { console.log("An unknown error occurred") }
+      
+    }
+  }
+
   useEffect(() => {
     if (!collections) getCollections();
-  }, [collections])
+    if (!user) getUser();
+  }, [collections, user])
 
   const handleFileInputClick = () => {
     document.getElementById('fileInput')?.click();
@@ -83,11 +99,12 @@ const Page = () => {
 
       setUrl(signedResponse);
       setUploading(false);
-      
+      return upload.cid;
     } catch (e) {
       console.log(e);
       setUploading(false);
       alert("Trouble uploading file");
+      return
     }
   };
 
@@ -170,7 +187,12 @@ const Page = () => {
                   <p className='text-sm italic text-stone-400'>Fill in the metadata information of the file.</p>
                 </div>
 
-                <AddRecord uploadFile={uploadFile} uploading={uploading} />
+                <AddRecord
+                uploadFile={uploadFile}
+                uploading={uploading}
+                selectedCollectionId={parseInt(selectedCollection)}
+                user={user}
+                /> 
               </div>
               {/* <Button className='' disabled={uploading} onClick={uploadFile}>
                 {uploading ? "Uploading..." : "Upload"}

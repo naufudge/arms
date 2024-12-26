@@ -30,7 +30,7 @@ model Record {
   relation String?
   coverage String?
   rights String
-  fileName String
+  fileId String
   createdOn DateTime @default(now())
   userId String
   user User @relation(fields: [userId], references: [id])
