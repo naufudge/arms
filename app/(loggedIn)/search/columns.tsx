@@ -2,7 +2,7 @@
 
 import { Record } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, Eye, MoreHorizontal, Trash2 } from "lucide-react"
  
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -11,9 +11,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import Link from "next/link"
+import { getFormattedDate } from "@/utils/Helpers"
 
 export const columns: ColumnDef<Record>[] = [
   {
@@ -65,11 +66,7 @@ export const columns: ColumnDef<Record>[] = [
   {
     accessorKey: "date",
     header: "Date",
-    cell: ({ row }) => new Date(row.getValue("date")).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: 'short',
-      year: 'numeric',
-    }),
+    cell: ({ row }) => getFormattedDate(row.getValue("date")),
   },
   // {
   //   accessorKey: "type",
@@ -82,11 +79,7 @@ export const columns: ColumnDef<Record>[] = [
   {
     accessorKey: "createdOn",
     header: "Uploaded On",
-    cell: ({ row }) => new Date(row.getValue("createdOn")).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: 'short',
-      year: 'numeric',
-    }),
+    cell: ({ row }) => getFormattedDate(row.getValue("createdOn")),
   },
   {
     accessorKey: "collection.name",
@@ -99,8 +92,8 @@ export const columns: ColumnDef<Record>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell: ({  }) => {
-      // const record = row.original
+    cell: ({ row }) => {
+      const record = row.original
  
       return (
         <DropdownMenu>
@@ -112,14 +105,17 @@ export const columns: ColumnDef<Record>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="center">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
+            {/* <DropdownMenuItem
               onClick={() => {}}
             >
               Copy payment ID
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuSeparator /> */}
+            <Link href={`/record/${record.id}`}>
+              <DropdownMenuItem className="hover:cursor-pointer"><Eye /> View Record</DropdownMenuItem>
+            </Link>
+
+            <DropdownMenuItem className="text-red-500 focus:text-red-500 hover:cursor-pointer"><Trash2 /> Request Deletion</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

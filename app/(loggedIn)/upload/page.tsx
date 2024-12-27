@@ -16,8 +16,8 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import AddRecord from '@/components/AddRecord';
 import { CheckCircle2Icon, ClockArrowUp, Loader2, Upload } from 'lucide-react';
-import Image from 'next/image';
 import { UserTokenType } from '@/lib/MyTypes';
+import FilePreview from '@/components/FilePreview';
 
 
 const Page = () => {
@@ -139,34 +139,14 @@ const Page = () => {
           <Separator className='my-8' />
           <div className='grid grid-cols-2 gap-8'>
             <div className='flex flex-col gap-3 col-span-1'>
-              {/* <Label htmlFor='fileInput' className=''>Upload Records</Label> */}
               <div className='flex flex-col gap-5 place-items-center justify-center border p-5 py-10 rounded-lg border-dashed border-stone-200'>
                 <div className='text-stone-400 text-sm italic'>Drag and drop your files here!</div>
                 <input id='fileInput' type='file' className='hidden' onChange={handleFileChange} />
                 <Button onClick={handleFileInputClick} className='w-fit'><Upload /> Choose a file</Button>
 
                 {/* Display the uploaded file after uploading successfully */}
-                {file && file.type === "application/pdf" && url &&
-                  // Display PDF in an iframe 
-                  <iframe src={url} width="100%" height="500px" style={{ border: 'none' }} />
-                }
-
-                {file && file.type.startsWith('image/') &&
-                  <Image src={URL.createObjectURL(file)} alt={file.name} width={450} height={0} />
-                }
-
-                {file && file.type.startsWith('audio/') &&
-                  <audio controls>
-                    <source src={URL.createObjectURL(file)} type={file.type} />
-                    Your browser does not support the audio element.
-                  </audio>
-                }
-
-                {file && file.type.startsWith('video/') &&
-                  <video controls width="450">
-                    <source src={URL.createObjectURL(file)} type={file.type} />
-                    Your browser does not support the video element.
-                  </video>
+                {file && 
+                  <FilePreview file={file} contentType={file.type} url={url} />
                 }
 
                 {/* Display file name after user chooses a file */}

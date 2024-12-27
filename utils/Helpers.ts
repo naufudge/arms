@@ -32,3 +32,11 @@ export async function checkIfPDF(ipfsUrl: string) {
     return false;
   }
 };
+
+export function getFormattedDate(date: Date) {
+  return new Date(date).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: 'short',
+    year: 'numeric',
+  })
+}

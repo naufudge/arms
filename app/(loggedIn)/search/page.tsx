@@ -37,34 +37,34 @@ const Page = () => {
 
     return (
         <div className="font-poppins w-full">
-        <h1 className="font-bold text-[2rem]">Search</h1>
-        <div className='text-sm text-stone-400 mt-1 italic'>Search the uploaded records.</div>
-        <br />
-        <div className='flex justify-between'>
-            <Input
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder='Search...'
-            className='w-1/2 py-5 placeholder:opacity-40'
-            />
-            <div className='flex gap-4'>
-                <Button variant={"outline"} className='h-full'><Filter/> Filter</Button>
-                <Button className='h-full'><Upload/> <Link href={"/upload"}>Upload</Link></Button>
+            <h1 className="font-bold text-[2rem]">Search</h1>
+            <div className='text-sm text-stone-400 mt-1 italic'>Search the uploaded records.</div>
+            <br />
+            <div className='flex justify-between'>
+                <Input
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder='Search...'
+                    className='w-1/2 py-5 placeholder:opacity-40'
+                />
+                <div className='flex gap-4'>
+                    <Button variant={"outline"} className='h-full'><Filter /> Filter</Button>
+                    <Button className='h-full'><Upload /> <Link href={"/upload"}>Upload</Link></Button>
+                </div>
             </div>
-        </div>
-        
-        <Separator className='my-10' />
-        
-        {/* Records Table */}
-        <div>
-            { records && records.length != 0 ?
-                <DataTable columns={columns} data={records} />
-            : records?.length === 0 ?
-                <div>No records yet. Start uploading now!</div>
-            : 
-                <Loader2 className='animate-spin mx-auto' />
-            }
-        </div>
+
+            <Separator className='my-10' />
+
+            {/* Records Table */}
+            <div>
+                {records && records.length != 0 ?
+                    <DataTable columns={columns} data={records} />
+                    : records?.length === 0 ?
+                        <div>No records yet. Start uploading now!</div>
+                        :
+                        <Loader2 className='animate-spin mx-auto' />
+                }
+            </div>
         </div>
     )
 }
