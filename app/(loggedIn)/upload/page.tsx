@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react'
-import { Collection, User } from '@prisma/client';
+import { Collection } from '@prisma/client';
 import { pinata } from "@/utils/config";
 import axios from 'axios';
 import {

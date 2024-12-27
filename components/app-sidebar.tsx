@@ -41,8 +41,8 @@ const menuItems = [
         url: "/settings",
         icon: Settings,
         items: [
-            {title: "Manage User Roles", url: "/settings/roles"},
-            {title: "Manage Collections", url: "/settings/collections"},
+            {title: "User Roles", url: "/settings/roles"},
+            {title: "Collections", url: "/settings/collections"},
         ]
     },
 ]
