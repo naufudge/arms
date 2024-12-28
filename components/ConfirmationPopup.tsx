@@ -10,14 +10,17 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { AlertDialogContentProps } from '@radix-ui/react-alert-dialog';
+import { User } from '@prisma/client';
 
 interface ConfirmationPopupProps extends AlertDialogContentProps {
     open: boolean; 
     setOpen: Dispatch<SetStateAction<boolean>>;
     description: string;
+    user?: User;
+    proceed: () => Promise<void>;
 }
 
-const ConfirmationPopup: React.FC<ConfirmationPopupProps> = ({ open, setOpen, description, ...props }) => {
+const ConfirmationPopup: React.FC<ConfirmationPopupProps> = ({ open, setOpen, description, user, proceed, ...props }) => {
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogContent {...props}>
@@ -28,9 +31,16 @@ const ConfirmationPopup: React.FC<ConfirmationPopupProps> = ({ open, setOpen, de
                 
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction>
+                    {
+                        user ? 
+                            <AlertDialogAction onClick={() => proceed()}>
+                                Continue
+                            </AlertDialogAction>
+                    :
+                    <AlertDialogAction onClick={proceed}>
                         Continue
                     </AlertDialogAction>
+                }
                 </AlertDialogFooter>
                     
             </AlertDialogContent>

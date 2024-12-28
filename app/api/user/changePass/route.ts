@@ -27,14 +27,14 @@ export async function POST(request: NextRequest) {
             }
         });
 
-        const response = await axios.post("/api/user/login", { username, password: newPassword })
+        // const response = await axios.post("/api/user/login", { username, password: hashedPassword })
 
-        if (response.data.success === false) {
-            return NextResponse.json({
-                success: false,
-                error: response.data.error
-            });
-        }
+        // if (response.data.success === false) {
+        //     return NextResponse.json({
+        //         success: false,
+        //         error: response.data.error
+        //     });
+        // }
 
         return NextResponse.json({
             success: true,

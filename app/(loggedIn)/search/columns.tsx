@@ -41,7 +41,18 @@ export const columns: ColumnDef<Record>[] = [
   },
   {
     accessorKey: "id",
-    header: "#",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-0"
+        >
+          #
+          <ArrowUpDown className="" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: "title",
@@ -50,7 +61,7 @@ export const columns: ColumnDef<Record>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex justify-start place-items-center"
+          className="flex justify-start place-items-center p-0"
         >
           Title
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -60,13 +71,13 @@ export const columns: ColumnDef<Record>[] = [
     
   },
   {
-    accessorKey: "creator",
-    header: "Creator",
-  },
-  {
     accessorKey: "date",
     header: "Date",
     cell: ({ row }) => getFormattedDate(row.getValue("date")),
+  },
+  {
+    accessorKey: "creator",
+    header: "Creator",
   },
   // {
   //   accessorKey: "type",

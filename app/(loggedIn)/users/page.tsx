@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react'
-import { Plus, RotateCcw } from 'lucide-react'
+import { Plus, RotateCcw, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -37,6 +37,7 @@ import axios from 'axios';
 import { User, UserRole } from '@prisma/client';
 import { AlertBar } from '@/components/Alerts';
 import { capitalizeFirstLetter } from '@/utils/Helpers';
+import ConfirmationPopup from '@/components/ConfirmationPopup';
 
 type NewUsersType = User & {
   userRole: UserRole
@@ -57,8 +58,13 @@ const Page = () => {
   const [alertTitle, setAlertTitle] = useState("")
   const [alertDescription, setAlertDescription] = useState("")
 
+  // Alerts that are shown inside the "Add user" popup
   const [showPopupAlert, setShowPopupAlert] = useState(false)
   const [popupAlertDescription, setPopupAlertDescription] = useState("")
+
+  // Contains the state of the confirmation dialog
+  const [confirmationDialog, setConfirmationDialog] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<User>()
 
   async function getUsers() {
     try {
@@ -89,6 +95,22 @@ const Page = () => {
     if (!users) getUsers()
     if (!userRoles) getRoles()
   }, [userRoles, users])
+
+  const showSuccess = (description: string) => {
+    setShowAlert(false)
+    setAlertType("success")
+    setAlertTitle("Success")
+    setAlertDescription(description)
+    setShowAlert(true)
+  }
+
+  const showError = (description: string = "There was a problem when reseting the password. Please try again!") => {
+    setShowAlert(false)
+    setAlertType("error")
+    setAlertTitle("Error")
+    setAlertDescription(description)
+    setShowAlert(true)
+}
 
   const handleAddUser = async () => {
     if (!username) {
@@ -136,16 +158,32 @@ const Page = () => {
     }
   }
 
-  const handleResetPassword = async (username: string) => {
-    console.log(username)
+  const handleResetPassword = async () => {
+    if (!selectedUser) return
+
+    try {
+      const response = await axios.post("/api/user/reset", { userId: selectedUser.id })
+      if (response.data.success) {
+        showSuccess(`Password updated for ${selectedUser.username}. Please inform the user to login via this temporary password: ${response.data.newPassword}`)
+      } else {
+        showError()
+      }    
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error.message)
+      } else { console.log("An unknown error occurred.") }
+
+      showError()
+    }
+  }
+
+  const handleResetPasswordClick = (user: User) => {
+    setSelectedUser(user)
+    setConfirmationDialog(true)
   }
 
   return (
     <div className="font-poppins">
-
-      {/* <div className='absolute top-1'>
-        <User className='-z-10 opacity-10 w-[200px] h-[200px]' />
-      </div> */}
       <AlertBar title={alertTitle} description={alertDescription} alertType={alertType} className={`mb-4 ${showAlert ? "" : "hidden"}`} />
 
       <div className='flex place-items-start justify-between'>
@@ -199,6 +237,9 @@ const Page = () => {
       </div>
 
       <br />
+
+      <ConfirmationPopup open={confirmationDialog} setOpen={setConfirmationDialog} proceed={handleResetPassword} description='Are you sure you want to reset the password of this user?' />
+
       {/* Users table */}
       <div>
         {users ?
@@ -217,13 +258,14 @@ const Page = () => {
                   <TableCell className="font-medium">{user.username}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{capitalizeFirstLetter(user.userRole.name)}</TableCell>
+                  
                   <TableCell>
                     <div className='flex gap-2'>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
                             <RotateCcw
-                              onClick={() => handleResetPassword(user.username)}
+                              onClick={() => handleResetPasswordClick(user)}
                               className='hover:cursor-pointer hover:text-primary text-stone-600 transition-all duration-200'
                             />
                           </TooltipTrigger>
@@ -239,7 +281,7 @@ const Page = () => {
             </TableBody>
           </Table>
           :
-          <div className='text-center'>No users yet.</div>
+          <div className='text-center mx-auto flex justify-center'><Loader2 className='animate-spin size-10' /></div>
         }
       </div>
     </div>

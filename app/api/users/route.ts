@@ -9,6 +9,7 @@ interface RequestBodyType {
     userRoleId: number;
 }
 
+// New user creation
 export async function POST(request: NextRequest) {
     try {
         const {username, email, userRoleId}: RequestBodyType = await request.json()
@@ -42,11 +43,14 @@ export async function POST(request: NextRequest) {
     }
 }
 
+// Fetch all existing users
 export async function GET() {
     try {
-        const users = await prisma.user.findMany({include: {
-            userRole: true,
-        }})
+        const users = await prisma.user.findMany({
+            include: {
+                userRole: true,
+            },
+        })
 
         return NextResponse.json({
             success: true,

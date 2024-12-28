@@ -10,13 +10,14 @@ export async function POST(request: NextRequest) {
             expires: 600, // Number of seconds link is valid for
         });
 
-        const { contentType } = await pinata.gateways.get(fileId)
+        const { data, contentType } = await pinata.gateways.get(fileId)
 
         if (url) {
             return NextResponse.json({
                 success: true,
                 file: url,
                 contentType,
+                fileData: data
             })
         } else {
             return NextResponse.json({

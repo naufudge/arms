@@ -112,8 +112,9 @@ const Page = () => {
                 setShowAlert(false)
                 setAlertType("success")
                 setAlertTitle("Success")
-                setAlertDescription("Password successfully changed!")
+                setAlertDescription("Password successfully changed. Please login with your new password!")
                 setShowAlert(true)
+                setShowPassChange(false)
                 return
             }
         } catch (error: unknown) {
@@ -131,7 +132,7 @@ const Page = () => {
             <div className='flex flex-col place-items-center justify-center w-full h-full'>
                 {showPassChange ?
                     <Card className='px-5 pt-3 flex flex-col gap-3'>
-                        <AlertBar title={alertTitle} description={alertDescription} alertType={alertType} className={`${showAlert ? "" : "hidden"} w-full mt-4`} />
+                        <AlertBar title={alertTitle} description={alertDescription} alertType={alertType} className={`${showAlert ? "" : "hidden"} w-full mt-4 max-w-[340px]`} />
 
                         <CardHeader className='flex flex-col gap-2'>
                             <CardTitle><h1 className='font-bold text-[2rem]'>Change Password</h1></CardTitle>
@@ -154,7 +155,7 @@ const Page = () => {
                     </Card>
                     :
                     <Card className='px-5 pt-3 flex flex-col gap-3'>
-                        <AlertBar title={alertTitle} description={alertDescription} alertType={alertType} className={`${showAlert ? "" : "hidden"} w-full mt-4`} />
+                        <AlertBar title={alertTitle} description={alertDescription} alertType={alertType} className={`${showAlert ? "" : "hidden"} w-full mt-4 max-w-[340px]`} />
                         <CardHeader className='flex flex-col gap-2'>
                             <CardTitle><h1 className='font-bold text-[2.5rem]'>Login</h1></CardTitle>
 

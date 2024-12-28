@@ -13,6 +13,7 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar";
+import Link from 'next/link';
 
 interface RecordPageProps {
     record: string;
@@ -47,6 +48,7 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                         if (fileResponse.data.success) {
                             setFileUrl(fileResponse.data.file)
                             setContentType(fileResponse.data.contentType)
+                            console.log(fileResponse.data)
                         }
                     }
                     return
@@ -65,10 +67,23 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
         if (!record) getRecord();
     }, [recordId, record, fileUrl, contentType])
 
+    const handleDownload = (name: string) => {
+        const a = document.createElement('a');
+        a.href = fileUrl;
+        a.download = `${name}.${contentType.split("/")[1]}`
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+      
+
     return (
         <div className='font-poppins'>
             <div className='flex justify-between place-items-center'>
-                <h1 className="font-bold text-[2rem] flex gap-4 place-items-center"><File className='h-full w-7' /> Record View</h1>
+                <div className='flex flex-col gap-2'>
+                    <h1 className="font-bold text-[2rem] flex gap-4 place-items-center"><File className='h-full w-7' /> Record View</h1>
+                    <p className='text-sm'><span className='font-semibold'>Collection:</span> {record?.collection.name}</p>
+                </div>
                 <Button variant={"outline"}><Pencil /> Edit Record</Button>
             </div>
 
@@ -78,8 +93,8 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                 { record &&
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
                         {/* Left Side */}
-                        <div className='grid grid-cols-1 gap-4'>
-                            <div className='flex flex-col gap-5 border p-5 h-fit min-h-[370px] rounded-lg shadow-sm'>
+                        <div className='flex flex-col gap-4'>
+                            <div className='flex flex-col gap-4 border p-5 h-fit min-h-[370px] rounded-lg shadow-sm'>
                                 <h2 className='font-bold text-center text-xl text-stone-600'>File Preview</h2>
                                 <div className='flex justify-center place-items-center h-full'>
                                     {fileUrl ? 
@@ -90,7 +105,7 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                                 </div>
                             </div>
 
-                            <div className='flex justify-between'>
+                            <div className='flex justify-between place-items-start'>
                                 {/* User Detail */}
                                 <div className='p-3 border rounded-lg flex gap-4 place-items-center w-fit pr-20'>
                                     <Avatar className="h-10 w-10 rounded-lg">
@@ -104,12 +119,13 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                                 </div>
 
                                 {/* Download button */}
-                                <Button><Download /> Download</Button>
+                                <Button onClick={() => handleDownload(record.title)}><Download /> Download</Button>
+                    
                             </div>
                         </div>
 
                         {/* Ride Side */}
-                        <div className='border rounded-lg p-5 grid grid-cols-3 gap-4 text-sm'>
+                        <div className='border rounded-lg p-5 grid grid-cols-3 gap-4 text-sm shadow-sm'>
                             <h2 className='font-bold text-xl text-stone-600 col-span-3 text-center mb-4'>Metadata</h2>
                             
                             <div className='h-fit'>

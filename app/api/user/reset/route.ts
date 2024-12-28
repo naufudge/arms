@@ -4,12 +4,12 @@ import bcrypt from "bcrypt";
 import { generateRandomPassword } from "@/utils/Helpers";
 
 export async function POST(request: NextRequest) {
-    const { username } = await request.json()
+    const { userId } = await request.json()
 
     const newPassword = generateRandomPassword();
 
     try {
-        const user = await prisma.user.findUnique({ where: { username } })
+        const user = await prisma.user.findUnique({ where: { id: userId } })
 
         if (!user) {
             return NextResponse.json({
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         await prisma.user.update({
-            where: { username },
+            where: { id: userId },
             data: { 
                 password: hashedPassword,
                 passChange: true
@@ -30,7 +30,8 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({
             success: true,
-            message: "Password reset success!"
+            message: "Password reset success!",
+            newPassword,
         });
 
     } catch (error: unknown) {

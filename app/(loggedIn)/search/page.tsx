@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator';
@@ -7,13 +8,12 @@ import { Record } from '@prisma/client';
 import axios from 'axios';
 import { Filter, Loader2, Upload } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react'
 import { DataTable } from './data-table';
 import { columns } from './columns';
 
 const Page = () => {
     const [records, setRecords] = useState<Record[]>()
-    const [searchTerm, setSearchTerm] = useState("")
+    const [filteredRecords, setFilteredRecords] = useState<Record[]>()
 
     useEffect(() => {
         async function getRecords() {
@@ -21,6 +21,7 @@ const Page = () => {
                 const response = await axios.get("/api/record")
                 if (response.data.success) {
                     setRecords(response.data.records)
+                    setFilteredRecords(response.data.records)
                 } else { setRecords([]) }
             } catch (error: unknown) {
                 if (error instanceof Error) {
@@ -35,6 +36,20 @@ const Page = () => {
         if (!records) getRecords()
     }, [records])
 
+    const handleSearch = (query: string) => {
+        if (query && records) {
+            const searchQuery = query.toLowerCase();
+            const searchResults = records.filter((record) =>
+                record.title.toLowerCase().includes(searchQuery) || record.description.toLowerCase().includes(searchQuery) || record.creator.toLowerCase().includes(searchQuery)
+            );
+            console.log(searchResults);
+            setFilteredRecords(searchResults);
+        } else {
+            setFilteredRecords(records);
+        }
+    };
+
+
     return (
         <div className="font-poppins w-full">
             <h1 className="font-bold text-[2rem]">Search</h1>
@@ -42,8 +57,8 @@ const Page = () => {
             <br />
             <div className='flex justify-between'>
                 <Input
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    id='search'
+                    onChange={(e) => handleSearch(e.target.value)}
                     placeholder='Search...'
                     className='w-1/2 py-5 placeholder:opacity-40'
                 />
@@ -57,10 +72,10 @@ const Page = () => {
 
             {/* Records Table */}
             <div>
-                {records && records.length != 0 ?
-                    <DataTable columns={columns} data={records} />
-                    : records?.length === 0 ?
-                        <div>No records yet. Start uploading now!</div>
+                {filteredRecords && filteredRecords.length != 0 ?
+                    <DataTable columns={columns} data={filteredRecords} />
+                    : filteredRecords?.length === 0 ?
+                        <div className='text-stone-500 text-center italic'>Record not found.</div>
                         :
                         <Loader2 className='animate-spin mx-auto' />
                 }

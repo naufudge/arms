@@ -2,6 +2,7 @@ import { prisma } from "@/prisma/db_client";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
+// Get a user
 export async function POST(request: NextRequest) {
     const { username, password } = await request.json();
 
@@ -40,11 +41,6 @@ export async function POST(request: NextRequest) {
                 user
             });
         }
-
-        // return NextResponse.json({
-        //     success: true,
-        //     user
-        // });
 
     } catch (error: unknown) {
         let errorMessage = "";
