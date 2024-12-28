@@ -9,11 +9,6 @@ interface FilePreviewProps {
 }
 
 const FilePreview: React.FC<FilePreviewProps> = ({ contentType, url, file }) => {
-    // PDF
-    if (contentType === "application/pdf") {
-        return <iframe src={url} width="100%" height="500px" style={{ border: 'none' }} />
-    }
-
     if (file) {
         // Image
         if (file.type.startsWith("image/")) {
@@ -55,6 +50,11 @@ const FilePreview: React.FC<FilePreviewProps> = ({ contentType, url, file }) => 
                     Your browser does not support the video element.
                 </video>
             )
+        }
+
+        // PDF
+        if (contentType === "application/pdf") {
+            return <iframe src={url} width="100%" height="500px" style={{ border: 'none' }} />
         }
     }
 }

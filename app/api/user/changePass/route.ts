@@ -1,7 +1,6 @@
 import { prisma } from "@/prisma/db_client";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import axios from "axios";
 
 
 export async function POST(request: NextRequest) {
@@ -26,15 +25,6 @@ export async function POST(request: NextRequest) {
                 passChange: false
             }
         });
-
-        // const response = await axios.post("/api/user/login", { username, password: hashedPassword })
-
-        // if (response.data.success === false) {
-        //     return NextResponse.json({
-        //         success: false,
-        //         error: response.data.error
-        //     });
-        // }
 
         return NextResponse.json({
             success: true,

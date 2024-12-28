@@ -20,10 +20,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Collection, UserRole } from '@prisma/client';
+import { Collection, Record, UserRole } from '@prisma/client';
 import { capitalizeFirstLetter } from '@/utils/Helpers';
 import { UserTokenType } from '@/lib/MyTypes';
 import { AlertBar } from '@/components/Alerts';
+import { Loader2 } from 'lucide-react';
 
 
 interface IndividualSettingPageProps {
@@ -32,6 +33,7 @@ interface IndividualSettingPageProps {
 
 interface ManageRolePageProps {
     userRoles: UserRole[] | undefined | null;
+    users: UserTokenType[] | undefined;
     showAlert: boolean;
     alertType: "success" | "error";
     alertTitle: string;
@@ -42,6 +44,7 @@ interface ManageRolePageProps {
 
 interface ManageCollectionPageProps {
     collections: Collection[] | undefined | null;
+    records: Record[] | undefined;
     user: UserTokenType | undefined;
     showAlert: boolean;
     alertType: "success" | "error";
@@ -54,9 +57,11 @@ interface ManageCollectionPageProps {
 const IndividualSettingPage = ({ params }: { params: Promise<IndividualSettingPageProps> }) => {
     const [setting, setSetting] = useState<string | null>(null);
     const [user, setUser] = useState<UserTokenType>()
-
+    
+    const [users, setUsers] = useState<UserTokenType[]>()
     const [userRoles, setUserRoles] = useState<UserRole[] | undefined | null>();
     const [collections, setCollections] = useState<Collection[] | undefined | null>();
+    const [records, setRecords] = useState<Record[]>()
 
     const [showAlert, setShowAlert] = useState(false)
     const [alertType, setAlertType] = useState<"success" | "error">("error")
@@ -76,12 +81,25 @@ const IndividualSettingPage = ({ params }: { params: Promise<IndividualSettingPa
         setShowAlert(true)
     }
 
+    async function getRecords() {
+        try {
+            const response = await axios.get("/api/record")
+            if (response.data.success) setRecords(response.data.records)
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log(error.message)
+            } else { console.log("An unknown error occurred.") }
+        }
+    }
+
     async function getUser() {
         try {
             const response = await axios.get("/api/user/me")
+            const usersResponse = await axios.get("/api/users")
 
             if (response.data.success) {
                 setUser(response.data.user)
+                setUsers(usersResponse.data.users)
             } else { console.log("Failed to fetch user.") }
 
         } catch (error: unknown) {
@@ -131,19 +149,21 @@ const IndividualSettingPage = ({ params }: { params: Promise<IndividualSettingPa
         params.then((resolvedParams) => {
             setSetting(resolvedParams.setting);
         });
-    }, [params]);
+    }, [params, setting]);
 
     useEffect(() => {
         if (!user) getUser();
         if (!userRoles) getUserRoles();
         if (!collections) getCollections();
-    }, [user, userRoles, collections])
+        if (!records) getRecords();
+    }, [user, userRoles, collections, records, users])
 
     switch (setting) {
         case "roles":
             return (
                 <ManageRolePage
                     userRoles={userRoles}
+                    users={users}
                     showAlert={showAlert}
                     alertType={alertType}
                     alertTitle={alertTitle}
@@ -157,6 +177,7 @@ const IndividualSettingPage = ({ params }: { params: Promise<IndividualSettingPa
             return (
                 <ManageCollectionPage
                     collections={collections}
+                    records={records}
                     user={user}
                     showAlert={showAlert}
                     alertType={alertType}
@@ -175,6 +196,7 @@ const IndividualSettingPage = ({ params }: { params: Promise<IndividualSettingPa
 // Add Role Page Component
 const ManageRolePage: React.FC<ManageRolePageProps> = ({
     userRoles,
+    users,
     showAlert,
     alertType,
     alertTitle,
@@ -203,6 +225,12 @@ const ManageRolePage: React.FC<ManageRolePageProps> = ({
         } finally { setRoleName("") }
     }
 
+    // Find the number of users with a specific role
+    const getNumUsersWithRole = (roleId: number) => {
+        const num = users?.filter((user) => roleId === user.userRoleId)
+        return num ? num.length : 0
+    }
+
     return (
         <div className='font-poppins grid grid-cols-3 gap-8'>
             <div className='col-span-full'>
@@ -227,13 +255,13 @@ const ManageRolePage: React.FC<ManageRolePageProps> = ({
                                 <TableRow key={role.id}>
                                     <TableCell>{role.id}</TableCell>
                                     <TableCell>{capitalizeFirstLetter(role.name)}</TableCell>
-                                    <TableCell>0</TableCell>
+                                    <TableCell>{getNumUsersWithRole(role.id)}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                     :
-                    <div>Loading...</div>
+                    <div className='flex text-center justify-center'><Loader2 className='animate-spin size-9' /></div>
                 }
             </div>
 
@@ -261,6 +289,7 @@ const ManageRolePage: React.FC<ManageRolePageProps> = ({
 // Manage collections component
 const ManageCollectionPage: React.FC<ManageCollectionPageProps> = ({
     collections,
+    records,
     user,
     showAlert,
     alertType,
@@ -296,6 +325,12 @@ const ManageCollectionPage: React.FC<ManageCollectionPageProps> = ({
         }
     }
 
+    // Function to find the number of records linked to that particular collection
+    const findNumOfRecordsInCollection = (collection: Collection) => {
+        const num = records?.filter((record) => record.collectionId === collection.id)
+        return num ? num.length : 0
+    }
+
     return (
         <div className='font-poppins grid grid-cols-3 gap-8'>
             <div className='col-span-full'>
@@ -309,7 +344,7 @@ const ManageCollectionPage: React.FC<ManageCollectionPageProps> = ({
                 {collections && collections.length === 0 ?
                     <div className='text-stone-400 text-center'>No collections found.</div>
                     : !collections ?
-                        <div>Loading...</div>
+                        <div className='flex text-center justify-center'><Loader2 className='animate-spin size-9' /></div>
                         :
                         <Table className=''>
                             <TableHeader>
@@ -317,7 +352,7 @@ const ManageCollectionPage: React.FC<ManageCollectionPageProps> = ({
                                     <TableHead>#</TableHead>
                                     <TableHead>Collection Name</TableHead>
                                     <TableHead>Description</TableHead>
-                                    <TableHead>Action</TableHead>
+                                    <TableHead>No. of Records</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -326,7 +361,7 @@ const ManageCollectionPage: React.FC<ManageCollectionPageProps> = ({
                                         <TableCell>{collection.id}</TableCell>
                                         <TableCell>{capitalizeFirstLetter(collection.name)}</TableCell>
                                         <TableCell>{collection.description}</TableCell>
-                                        <TableCell>View</TableCell>
+                                        <TableCell>{findNumOfRecordsInCollection(collection)}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

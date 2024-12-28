@@ -5,7 +5,7 @@ import FilePreview from '@/components/FilePreview';
 import { Collection, Record, User } from '@prisma/client';
 import { Separator } from '@/components/ui/separator';
 import axios from 'axios';
-import { Download, File, Loader2, Pencil } from 'lucide-react';
+import { Download, File, Loader2, Pencil, SquareArrowOutUpRight } from 'lucide-react';
 import { getFormattedDate } from '@/utils/Helpers';
 import { Button } from '@/components/ui/button';
 import {
@@ -94,13 +94,18 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
                         {/* Left Side */}
                         <div className='flex flex-col gap-4'>
-                            <div className='flex flex-col gap-4 border p-5 h-fit min-h-[370px] rounded-lg shadow-sm'>
+                            <div className='relative flex flex-col gap-4 border p-5 h-fit min-h-[370px] rounded-lg shadow-sm'>
+                                {/* Open in new tab button */}
+                                <div className='absolute top-4 right-4 hover:text-primary hover:cursor-pointer transition-all'>
+                                    <Link href={fileUrl} target='_blank'><SquareArrowOutUpRight className='size-5' /></Link>
+                                </div>
+
                                 <h2 className='font-bold text-center text-xl text-stone-600'>File Preview</h2>
                                 <div className='flex justify-center place-items-center h-full'>
                                     {fileUrl ? 
                                         <FilePreview contentType={contentType} url={fileUrl} />
                                     :
-                                        <Loader2 className='animate-spin'/>
+                                        <Loader2 className='animate-spin size-8'/>
                                     }
                                 </div>
                             </div>
@@ -117,9 +122,12 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                                         <span className='text-stone-400'>{getFormattedDate(record.createdOn)}</span>
                                     </div>
                                 </div>
-
-                                {/* Download button */}
-                                <Button onClick={() => handleDownload(record.title)}><Download /> Download</Button>
+                                
+                                <div className='flex flex-col gap-4 justify-end text-right'>
+                                    {/* <Link href={"/"} className='text-[12px] text-stone-500'> Open in new tab</Link> */}
+                                    {/* Download button */}
+                                    <Button onClick={() => handleDownload(record.title)}><Download /> Download</Button>
+                                </div>
                     
                             </div>
                         </div>

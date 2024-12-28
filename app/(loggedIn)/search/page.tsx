@@ -77,7 +77,7 @@ const Page = () => {
                     : filteredRecords?.length === 0 ?
                         <div className='text-stone-500 text-center italic'>Record not found.</div>
                         :
-                        <Loader2 className='animate-spin mx-auto' />
+                        <Loader2 className='animate-spin mx-auto size-9' />
                 }
             </div>
         </div>
