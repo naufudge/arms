@@ -23,6 +23,7 @@ const Page = () => {
                     setRecords(response.data.records)
                     setFilteredRecords(response.data.records)
                 } else { setRecords([]) }
+                
             } catch (error: unknown) {
                 if (error instanceof Error) {
                     console.error(error.message)

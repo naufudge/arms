@@ -40,3 +40,16 @@ export function getFormattedDate(date: Date) {
     year: 'numeric',
   })
 }
+
+export function getGreeting(): string {
+  const now = new Date();
+  const hour = now.getHours();
+
+  if (hour >= 5 && hour < 12) {
+      return "good morning!";
+  } else if (hour >= 12 && hour < 17) {
+      return "good afternoon!";
+  } else {
+      return "good evening!";
+  }
+}
