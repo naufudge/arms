@@ -18,13 +18,6 @@ interface RecordChartProps {
   recordsData: Record[];
 };
 
-type ChartConfigType = {
-  [key: string]: {
-    label: string;
-    color?: string;
-  }
-}
-
 type ChartDataType = {
   collection: string;
   records: number;
@@ -71,7 +64,7 @@ export function RecordsChart({ collections, recordsData }: RecordChartProps) {
       console.log(getFormattedDataset(collections, recordsData))
       setDataSet(getFormattedDataset(collections, recordsData))
     }
-  }, [chartConfig, dataSet])
+  }, [chartConfig, dataSet, collections, recordsData])
 
 
   return (

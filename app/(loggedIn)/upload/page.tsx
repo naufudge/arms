@@ -136,11 +136,12 @@ const Page = () => {
 
       {selectedCollection &&
         <>
-          <Separator className='my-8' />
-          <div className='grid grid-cols-2 gap-8'>
+          <Separator className='my-10' />
+          <div className='grid grid-cols-1 gap-8'>
             <div className='flex flex-col gap-3 col-span-1'>
               <div className='flex flex-col gap-5 place-items-center justify-center border p-5 py-10 rounded-lg border-dashed border-stone-200'>
                 <div className='text-stone-400 text-sm italic'>Drag and drop your files here!</div>
+                
                 <input id='fileInput' type='file' className='hidden' onChange={handleFileChange} />
                 <Button onClick={handleFileInputClick} className='w-fit'><Upload /> Choose a file</Button>
 

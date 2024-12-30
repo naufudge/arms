@@ -23,10 +23,12 @@ const FilePreview: React.FC<FilePreviewProps> = ({ contentType, url, file }) => 
             )
         // Video
         } else if (file.type.startsWith("video/")) {
-            <video controls width="450">
-                <source src={URL.createObjectURL(file)} type={file.type} />
-                Your browser does not support the video element.
-            </video>
+            return (
+                <video controls width="450">
+                    <source src={URL.createObjectURL(file)} type={file.type} />
+                    Your browser does not support the video element.
+                </video>
+            )
         }
     
     // File preview from URL of the uploaded file

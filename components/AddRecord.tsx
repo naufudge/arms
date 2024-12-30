@@ -30,7 +30,7 @@ import { UserTokenType } from '@/lib/MyTypes'
 const formSchema = z.object({
   title: z.string().min(5, { message: "Title must be between 5 to 50 characters" }).max(50),
   subject: z.string(),
-  description: z.string().min(10).max(500),
+  description: z.string().min(10, {message: "Description must be longer than 10 characters"}).max(500),
   creator: z.string().min(5).max(50),
   publisher: z.string(),
   contributor: z.string(),
@@ -53,7 +53,7 @@ interface AddRecordProps {
   user: UserTokenType | undefined;
 }
 
-const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCollectionId, user }) => {  
+const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCollectionId, user }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -79,9 +79,9 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
     if (!user || !selectedCollectionId) {
       return
     }
-    
+
     const ccid = await uploadFile();
-    
+
     if (ccid) {
       const data = {
         ...values,
@@ -90,7 +90,7 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
         collectionId: selectedCollectionId,
         userId: user.id
       }
-      
+
       const response = await axios.post("/api/record", data)
       if (response.data.success) {
         alert("Record added successfully.")
@@ -103,97 +103,98 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input placeholder="Title" {...field} />
-              </FormControl>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10'>
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="Title" {...field} />
+                </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="subject"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Subject</FormLabel>
-              <FormControl>
-                <Input placeholder="Subject" {...field} />
-              </FormControl>
+          <FormField
+            control={form.control}
+            name="subject"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Subject</FormLabel>
+                <FormControl>
+                  <Input placeholder="Subject" {...field} />
+                </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Description" {...field} />
-              </FormControl>
+          <FormField
+            control={form.control}
+            name="creator"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Creator</FormLabel>
+                <FormControl>
+                  <Input placeholder="Creator" {...field} />
+                </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="creator"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Creator</FormLabel>
-              <FormControl>
-                <Input placeholder="Creator" {...field} />
-              </FormControl>
+          <FormField
+            control={form.control}
+            name="publisher"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Publisher</FormLabel>
+                <FormControl>
+                  <Input placeholder="Publisher" {...field} />
+                </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="publisher"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Publisher</FormLabel>
-              <FormControl>
-                <Input placeholder="Publisher" {...field} />
-              </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem className='col-span-full'>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="Description" {...field} />
+                </FormControl>
 
-        <FormField
-          control={form.control}
-          name="contributor"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Contributor</FormLabel>
-              <FormControl>
-                <Input placeholder="Contributor" {...field} />
-              </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      
-        <div className='grid grid-cols-2 gap-6'>
+          <FormField
+            control={form.control}
+            name="contributor"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Contributor</FormLabel>
+                <FormControl>
+                  <Input placeholder="Contributor" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           {/* Date */}
           <FormField
             control={form.control}
@@ -253,9 +254,7 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
               </FormItem>
             )}
           />
-        </div>
-        
-        <div className='grid grid-cols-2 gap-6'>
+
           {/* Format */}
           <FormField
             control={form.control}
@@ -287,87 +286,87 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
               </FormItem>
             )}
           />
+
+          {/* Source */}
+          <FormField
+            control={form.control}
+            name="source"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Source</FormLabel>
+                <FormControl>
+                  <Input placeholder="Source" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Language */}
+          <FormField
+            control={form.control}
+            name="language"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Language</FormLabel>
+                <FormControl>
+                  <Input placeholder="Language" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Relation */}
+          <FormField
+            control={form.control}
+            name="relation"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Relation</FormLabel>
+                <FormControl>
+                  <Input placeholder="Relation" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Coverage */}
+          <FormField
+            control={form.control}
+            name="coverage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Coverage</FormLabel>
+                <FormControl>
+                  <Input placeholder="Coverage" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Rights */}
+          <FormField
+            control={form.control}
+            name="rights"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Rights</FormLabel>
+                <FormControl>
+                  <Input placeholder="Rights" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-
-        {/* Source */}
-        <FormField
-          control={form.control}
-          name="source"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Source</FormLabel>
-              <FormControl>
-                <Input placeholder="Source" {...field} />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Language */}
-        <FormField
-          control={form.control}
-          name="language"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Language</FormLabel>
-              <FormControl>
-                <Input placeholder="Language" {...field} />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Relation */}
-        <FormField
-          control={form.control}
-          name="relation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Relation</FormLabel>
-              <FormControl>
-                <Input placeholder="Relation" {...field} />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Coverage */}
-        <FormField
-          control={form.control}
-          name="coverage"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Coverage</FormLabel>
-              <FormControl>
-                <Input placeholder="Coverage" {...field} />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Rights */}
-        <FormField
-          control={form.control}
-          name="rights"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rights</FormLabel>
-              <FormControl>
-                <Input placeholder="Rights" {...field} />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         <Button type="submit" disabled={uploading}>Submit</Button>
       </form>

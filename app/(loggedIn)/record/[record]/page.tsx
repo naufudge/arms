@@ -14,6 +14,7 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar";
 import Link from 'next/link';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface RecordPageProps {
     record: string;
@@ -26,10 +27,12 @@ type FullRecord = Record & {
 
 const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
     const [recordId, setRecordId] = useState<string | null>(null);
-    const [record, setRecord] = useState<FullRecord | null>()
+    const [record, setRecord] = useState<FullRecord | null>();
     
-    const [fileUrl, setFileUrl] = useState("")
-    const [contentType, setContentType] = useState("")
+    const [fileUrl, setFileUrl] = useState("");
+    const [contentType, setContentType] = useState("");
+
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         params.then((resolvedParams) => {
@@ -81,7 +84,7 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
         <div className='font-poppins'>
             <div className='flex justify-between place-items-center'>
                 <div className='flex flex-col gap-2'>
-                    <h1 className="font-bold text-[2rem] flex gap-4 place-items-center"><File className='h-full w-7' /> Record View</h1>
+                    <h1 className="font-bold text-[2rem] flex gap-4 place-items-center">{!isMobile && <File className='h-full w-7' />} Record View</h1>
                     <p className='text-sm'><span className='font-semibold'>Collection:</span> {record?.collection.name}</p>
                 </div>
                 <Button variant={"outline"}><Pencil /> Edit Record</Button>
@@ -109,32 +112,33 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                                     }
                                 </div>
                             </div>
-
-                            <div className='flex justify-between place-items-start'>
+                            
+                            {/* User Details & Download Button */}
+                            <div className='flex flex-col gap-4 md:flex-row justify-between place-items-start'>
                                 {/* User Detail */}
-                                <div className='p-3 border rounded-lg flex gap-4 place-items-center w-fit pr-20'>
+                                <div className='p-3 border rounded-lg flex gap-4 place-items-center w-full md:w-fit pr-20'>
                                     <Avatar className="h-10 w-10 rounded-lg">
                                         <AvatarImage src="" alt={record.user.username} />
                                         <AvatarFallback className="rounded-full">{record.user.username[0].toUpperCase()}</AvatarFallback>
                                     </Avatar>
-                                    <div className='flex flex-col gap-1 text-sm'>
+                                    <div className='flex flex-col gap-1 text-sm min-w-full'>
                                         <span>{record.user.username}</span>
                                         <span className='text-stone-400'>{getFormattedDate(record.createdOn)}</span>
                                     </div>
                                 </div>
                                 
-                                <div className='flex flex-col gap-4 justify-end text-right'>
+                                <div className='w-full md:w-fit'>
                                     {/* <Link href={"/"} className='text-[12px] text-stone-500'> Open in new tab</Link> */}
                                     {/* Download button */}
-                                    <Button onClick={() => handleDownload(record.title)}><Download /> Download</Button>
+                                    <Button className='w-full' onClick={() => handleDownload(record.title)}><Download /> Download</Button>
                                 </div>
                     
                             </div>
                         </div>
 
                         {/* Ride Side */}
-                        <div className='border rounded-lg p-5 grid grid-cols-3 gap-4 text-sm shadow-sm'>
-                            <h2 className='font-bold text-xl text-stone-600 col-span-3 text-center mb-4'>Metadata</h2>
+                        <div className='border rounded-lg p-5 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm shadow-sm'>
+                            <h2 className='flex font-bold text-xl text-stone-600 col-span-full justify-center mb-4'>Metadata</h2>
                             
                             <div className='h-fit'>
                                 <div className='font-bold'>Title</div>
@@ -151,12 +155,12 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                                 <div>{record.creator}</div>
                             </div>
                             
-                            <div className='col-span-3'>
+                            <div className='col-span-full'>
                                 <div className='font-bold'>Description</div>
                                 <div>{record.description}</div>
                             </div>
 
-                            <Separator className='col-span-3 my-2' />
+                            <Separator className='col-span-full my-2' />
 
                             <div className='h-fit'>
                                 <div className='font-bold'>Publisher</div>
