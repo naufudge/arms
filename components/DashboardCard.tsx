@@ -15,9 +15,9 @@ const DashboardCard: React.FC<DashboardCardTypes> = ({ title, icon, content }) =
   return (
     <Card>
         <CardHeader>
-            <div className="flex justify-between w-full">
-                <h3 className="font-light">{title}</h3>
-                <div className=''>{icon}</div>
+            <div className="flex justify-between md:flex-col lg:flex-row">
+                <h3 className="font-light text-sm md:text-md">{title}</h3>
+                <div className='size-5'>{icon}</div>
             </div>
         </CardHeader>
         <CardContent><div className="font-bold text-xl">{content}</div></CardContent>

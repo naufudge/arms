@@ -46,10 +46,10 @@ export function getGreeting(): string {
   const hour = now.getHours();
 
   if (hour >= 5 && hour < 12) {
-      return "good morning!";
+      return "Good Morning!";
   } else if (hour >= 12 && hour < 17) {
-      return "good afternoon!";
+      return "Good Afternoon!";
   } else {
-      return "good evening!";
+      return "Good Evening!";
   }
 }

@@ -17,7 +17,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { RecordsChart } from "@/components/RecordsChart";
+import Link from "next/link";
 
 type FullRecord = Record & {
   user: UserTokenType,
@@ -34,7 +36,6 @@ export default function Home() {
       const response = await axios.get("/api/collection")
       if (response.data.success) {
         setCollections(response.data.collections)
-        console.log(response.data.collections)
       } else {
         console.log("Failed to fetch collections.")
         setCollections(null)
@@ -85,22 +86,26 @@ export default function Home() {
 
       <Separator className="my-10" />
       {records && collections && users ?
-        <div className="grid grid-cols-6">
-          <div className="col-span-3 grid grid-cols-3 gap-10">
-            <DashboardCard title="Total Records" icon={<FolderUp className="text-green-600" />} content={records?.length.toString()} />
-            <DashboardCard title="Total Collections" icon={<LibraryBig className="text-orange-600" />} content={collections?.length.toString()} />
-            <DashboardCard title="Total Users" icon={<Users className="text-yellow-600" />} content={users?.length.toString()} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-10">
+              <DashboardCard title="Total Records" icon={<FolderUp className="text-green-600" />} content={records?.length.toString()} />
+              <DashboardCard title="Total Collections" icon={<LibraryBig className="text-orange-600" />} content={collections?.length.toString()} />
+              <DashboardCard title="Total Users" icon={<Users className="text-yellow-600" />} content={users?.length.toString()} />
+            </div>
+            
             {/* Recent uploads table */}
             <div className="col-span-full">
               <Card className="p-2">
                 <CardHeader>
-                  <h2 className="font-bold">Recent Uploads</h2>
+                  <CardTitle>Recent Uploads</CardTitle>
+                  <CardDescription>Five most recent records uploaded to ARMs.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-[100px]">ID</TableHead>
+                        <TableHead>ID</TableHead>
                         <TableHead>Title</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead className="text-right">User</TableHead>
@@ -110,7 +115,9 @@ export default function Home() {
                       {records.slice(-5).reverse().map((record, index) => (
                         <TableRow key={index}>
                           <TableCell className="font-medium">{record.id}</TableCell>
-                          <TableCell>{record.title}</TableCell>
+                          <TableCell>
+                            <Link href={`/record/${record.id}`} className="hover:underline hover:text-stone-500">{record.title}</Link>
+                          </TableCell>
                           <TableCell>{getFormattedDate(record.date)}</TableCell>
                           <TableCell className="text-right">{record.user.username}</TableCell>
                         </TableRow>
@@ -123,8 +130,16 @@ export default function Home() {
           </div>
             
           {/* Records by collection */}
-          <div>
-
+          <div className="h-fit">
+              <Card className="h-fit">
+                <CardHeader>
+                  <CardTitle>Records per collection</CardTitle>
+                  <CardDescription>Records uploaded per collection.</CardDescription>
+                </CardHeader>
+                <CardContent className="w-full">
+                  <RecordsChart collections={collections} recordsData={records} />
+                </CardContent>
+              </Card>
           </div>
         </div>
         :
