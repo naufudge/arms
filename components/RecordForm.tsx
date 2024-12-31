@@ -1,10 +1,7 @@
-"use client"
-
-import React from 'react'
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import React from 'react';
+import { UseFormReturn } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -12,82 +9,31 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from '@/components/ui/textarea'
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Calendar } from "@/components/ui/calendar"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from '@/components/ui/textarea';
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import axios from 'axios'
-import { recordFormSchema, UserTokenType } from '@/lib/MyTypes'
+} from "@/components/ui/popover";
+import { recordFormSchema } from '@/lib/MyTypes';
 
-
-
-
-interface AddRecordProps {
-  uploading: boolean;
-  uploadFile: () => Promise<string | undefined>;
-  selectedCollectionId: number;
-  user: UserTokenType | undefined;
+interface RecordFormProps {
+    form: UseFormReturn<z.infer<typeof recordFormSchema>>;
+    onSubmit: (values: z.infer<typeof recordFormSchema>) => Promise<void>;
+    uploading?: boolean;
 }
 
-const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCollectionId, user }) => {
-  const form = useForm<z.infer<typeof recordFormSchema>>({
-    resolver: zodResolver(recordFormSchema),
-    defaultValues: {
-      title: "",
-      subject: "",
-      description: "",
-      creator: "",
-      publisher: "",
-      contributor: "",
-      date: new Date(),
-      type: "",
-      format: "",
-      identifier: "",
-      source: "",
-      language: "",
-      relation: "",
-      coverage: "",
-      rights: ""
-    },
-  })
-
-  async function onSubmit(values: z.infer<typeof recordFormSchema>) {
-    if (!user || !selectedCollectionId) {
-      return
-    }
-
-    const ccid = await uploadFile();
-
-    if (ccid) {
-      const data = {
-        ...values,
-        date: new Date(values.date),
-        fileId: ccid,
-        collectionId: selectedCollectionId,
-        userId: user.id
-      }
-
-      const response = await axios.post("/api/record", data)
-      if (response.data.success) {
-        alert("Record added successfully.")
-      } else {
-        alert("Failed to add record.")
-      }
-    }
-  }
-
+const RecordForm: React.FC<RecordFormProps> = ({ form, onSubmit, uploading }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7">
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 overflow-y-scroll'>
           <FormField
             control={form.control}
             name="title"
@@ -184,7 +130,7 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
             control={form.control}
             name="date"
             render={({ field }) => (
-              <FormItem className='flex flex-col justify-start gap-1'>
+              <FormItem className=''>
                 <FormLabel>Date</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -228,7 +174,7 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
             control={form.control}
             name="type"
             render={({ field }) => (
-              <FormItem className='flex flex-col justify-start gap-1'>
+              <FormItem className=''>
                 <FormLabel>Type</FormLabel>
                 <FormControl>
                   <Input placeholder="Type" {...field} />
@@ -358,4 +304,4 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
   )
 }
 
-export default AddRecord
+export default RecordForm
