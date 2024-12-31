@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { Collection } from '@prisma/client';
 import { pinata } from "@/utils/config";
 import axios from 'axios';
@@ -35,7 +35,6 @@ const Page = () => {
       const response = await axios.get("/api/collection")
       if (response.data.success) {
         setCollections(response.data.collections)
-        console.log(response.data.collections)
       } else {
         console.log("Failed to fetch collections.")
         setCollections(null)
@@ -56,7 +55,6 @@ const Page = () => {
       if (error instanceof Error) {
         console.log(error.message)
       } else { console.log("An unknown error occurred") }
-      
     }
   }
 
@@ -141,12 +139,12 @@ const Page = () => {
             <div className='flex flex-col gap-3 col-span-1'>
               <div className='flex flex-col gap-5 place-items-center justify-center border p-5 py-10 rounded-lg border-dashed border-stone-200'>
                 <div className='text-stone-400 text-sm italic'>Drag and drop your files here!</div>
-                
+
                 <input id='fileInput' type='file' className='hidden' onChange={handleFileChange} />
                 <Button onClick={handleFileInputClick} className='w-fit'><Upload /> Choose a file</Button>
 
                 {/* Display the uploaded file after uploading successfully */}
-                {file && 
+                {file &&
                   <FilePreview file={file} contentType={file.type} url={url} />
                 }
 
@@ -169,11 +167,11 @@ const Page = () => {
                 </div>
 
                 <AddRecord
-                uploadFile={uploadFile}
-                uploading={uploading}
-                selectedCollectionId={parseInt(selectedCollection)}
-                user={user}
-                /> 
+                  uploadFile={uploadFile}
+                  uploading={uploading}
+                  selectedCollectionId={parseInt(selectedCollection)}
+                  user={user}
+                />
               </div>
               {/* <Button className='' disabled={uploading} onClick={uploadFile}>
                 {uploading ? "Uploading..." : "Upload"}

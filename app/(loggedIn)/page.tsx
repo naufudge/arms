@@ -107,7 +107,7 @@ export default function Home() {
                       <TableRow>
                         <TableHead>ID</TableHead>
                         <TableHead>Title</TableHead>
-                        <TableHead>Date</TableHead>
+                        <TableHead>Record Date</TableHead>
                         <TableHead className="text-right">User</TableHead>
                       </TableRow>
                     </TableHeader>

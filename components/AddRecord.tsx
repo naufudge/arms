@@ -51,6 +51,7 @@ interface AddRecordProps {
   uploadFile: () => Promise<string | undefined>;
   selectedCollectionId: number;
   user: UserTokenType | undefined;
+  form?: any;
 }
 
 const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCollectionId, user }) => {
