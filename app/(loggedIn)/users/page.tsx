@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react'
-import { Plus, RotateCcw, Loader2 } from 'lucide-react'
+import { Plus, RotateCcw, Loader2, Ban, BadgeCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -110,7 +110,7 @@ const Page = () => {
     setAlertTitle("Error")
     setAlertDescription(description)
     setShowAlert(true)
-}
+  }
 
   const handleAddUser = async () => {
     if (!username) {
@@ -167,7 +167,7 @@ const Page = () => {
         showSuccess(`Password updated for ${selectedUser.username}. Please inform the user to login via this temporary password: ${response.data.newPassword}`)
       } else {
         showError()
-      }    
+      }
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.log(error.message)
@@ -180,6 +180,10 @@ const Page = () => {
   const handleResetPasswordClick = (user: User) => {
     setSelectedUser(user)
     setConfirmationDialog(true)
+  }
+
+  const handleDisableEnableLoginClick = (state: boolean) => {
+    
   }
 
   return (
@@ -246,6 +250,7 @@ const Page = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>#</TableHead>
                 <TableHead>Username</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>User Role</TableHead>
@@ -255,12 +260,14 @@ const Page = () => {
             <TableBody>
               {users.map((user, index) => (
                 <TableRow key={index}>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell className="font-medium">{user.username}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{capitalizeFirstLetter(user.userRole.name)}</TableCell>
-                  
+                  {/* Actions */}
                   <TableCell>
-                    <div className='flex gap-2'>
+                    <div className='flex gap-4'>
+                      {/* Reset Password Button */}
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
@@ -271,6 +278,31 @@ const Page = () => {
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>Reset Password</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+
+                      {/* Disable or Enable Login Button */}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            {user.disabled ?
+                              <BadgeCheck />
+                              :
+                              <Ban
+                                onClick={() => { }}
+                                className='hover:cursor-pointer hover:text-primary text-stone-600 transition-all duration-200'
+                              />
+                            }
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>
+                              {user.disabled ?
+                                "Enable Login"
+                                :
+                                "Disable Login"
+                              }
+                            </p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
