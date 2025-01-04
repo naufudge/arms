@@ -26,13 +26,12 @@ import {
 } from "@/components/ui/popover"
 import axios from 'axios'
 import { recordFormSchema, UserTokenType } from '@/lib/MyTypes'
-
-
+import { UploadResponse } from 'pinata'
 
 
 interface AddRecordProps {
   uploading: boolean;
-  uploadFile: () => Promise<string | undefined>;
+  uploadFile: () => Promise<UploadResponse | undefined>;
   selectedCollectionId: number;
   user: UserTokenType | undefined;
 }
@@ -61,21 +60,24 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
 
   async function onSubmit(values: z.infer<typeof recordFormSchema>) {
     if (!user || !selectedCollectionId) {
+      alert("User not logged in.")
       return
     }
 
-    const ccid = await uploadFile();
+    const uploadResponse = await uploadFile();
 
-    if (ccid) {
-      const data = {
+    if (uploadResponse) {
+      const recordData = {
         ...values,
         date: new Date(values.date),
-        fileId: ccid,
+        // fileId: uploadResponse,
         collectionId: selectedCollectionId,
         userId: user.id
       }
 
-      const response = await axios.post("/api/record", data)
+      const response = await axios.post("/api/record", { recordData, uploadResponse })
+      console.log(response)
+
       if (response.data.success) {
         alert("Record added successfully.")
       } else {
@@ -352,7 +354,7 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
           />
         </div>
 
-        <Button type="submit" disabled={uploading}>Submit</Button>
+        <Button name='submit' type="submit" disabled={uploading}>Submit</Button>
       </form>
     </Form>
   )

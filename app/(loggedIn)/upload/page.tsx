@@ -97,7 +97,7 @@ const Page = () => {
 
       setUrl(signedResponse);
       setUploading(false);
-      return upload.cid;
+      return upload;
     } catch (e) {
       console.log(e);
       setUploading(false);

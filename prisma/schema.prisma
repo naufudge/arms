@@ -30,12 +30,14 @@ model Record {
   relation String?
   coverage String?
   rights String
-  fileId String
   createdOn DateTime @default(now())
+  files File[]
   userId String
   user User @relation(fields: [userId], references: [id])
   collectionId Int
   collection Collection @relation(fields: [collectionId], references: [id])
+  deleteReq DeleteRequest? @relation(fields: [deleteReqId], references: [id])
+  deleteReqId Int? @unique
 }
 
 model User {
@@ -47,6 +49,8 @@ model User {
   passChange Boolean @default(true)
   records Record[]
   collections Collection[]
+  deleteReqs DeleteRequest[] @relation(name: "RequestUser")
+  approvedDeleteReqs DeleteRequest[] @relation(name: "ApproveUser")
   userRoleId Int
   userRole UserRole @relation(fields: [userRoleId], references: [id])
 }
@@ -65,4 +69,25 @@ model UserRole {
   id Int @id @default(autoincrement())
   name String
   users User[]
+}
+
+model File {
+  id String @id
+  name String
+  type String
+  size Int
+  recordId Int
+  record Record @relation(fields: [recordId], references: [id])
+}
+
+model DeleteRequest {
+  id Int @id @default(autoincrement())
+  reason String
+  approved Boolean @default(false)
+  createdOn DateTime @default(now())
+  record Record? @relation
+  reqUser User @relation(name: "RequestUser", fields: [reqUserId], references: [id])
+  reqUserId String
+  approveUser User? @relation(name: "ApproveUser", fields: [approveUserId], references: [id])
+  approveUserId String?
 }

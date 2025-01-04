@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import FilePreview from '@/components/FilePreview';
 import { Separator } from '@/components/ui/separator';
 import axios from 'axios';
-import { Download, File, Loader2, Pencil, SquareArrowOutUpRight } from 'lucide-react';
+import { Download, FileIcon, Loader2, Pencil, SquareArrowOutUpRight } from 'lucide-react';
 import { getFormattedDate } from '@/utils/Helpers';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { useIsMobile } from '@/hooks/use-mobile';
 import EditRecord from '@/components/EditRecord';
 import { FullRecord } from '@/lib/MyTypes';
+import { File, Record } from '@prisma/client';
 
 interface RecordPageProps {
     record: string;
@@ -44,9 +45,10 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
             try {
                 if (recordId) {
                     const response = await axios.post("/api/record/id", { id: parseInt(recordId) })
+                    const recordData: Record & { files: File[] } = response.data.record
                     if (response.data.success) {
                         setRecord(response.data.record)
-                        const fileResponse = await axios.post("/api/pinata/retrieve", { fileId: response.data.record.fileId })
+                        const fileResponse = await axios.post("/api/pinata/retrieve", { fileId: recordData.files[0].id })
                         if (fileResponse.data.success) {
                             setFileUrl(fileResponse.data.file)
                             setContentType(fileResponse.data.contentType)
@@ -83,7 +85,7 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
         <div className='font-poppins'>
             <div className='flex justify-between place-items-center'>
                 <div className='flex flex-col gap-2'>
-                    <h1 className="font-bold text-[2rem] flex gap-4 place-items-center">{!isMobile && <File className='h-full w-7' />} Record View</h1>
+                    <h1 className="font-bold text-[2rem] flex gap-4 place-items-center">{!isMobile && <FileIcon className='h-full w-7' />} Record View</h1>
                     <p className='text-sm'><span className='font-semibold'>Collection:</span> {record?.collection.name}</p>
                 </div>
                 <Button variant={"outline"} onClick={() => setEditRecordOpen(true)}><Pencil /> Edit Record</Button>
@@ -95,6 +97,7 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                 {record &&
                     <>
                         <EditRecord open={editRecordOpen} setOpen={setEditRecordOpen} record={record} />
+
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
                             {/* Left Side */}
                             <div className='flex flex-col gap-4'>
@@ -194,11 +197,6 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                                 </div>
 
                                 <div className='h-fit'>
-                                    <div className='font-bold'>Source</div>
-                                    <div>{record.source ? record.source : "-"}</div>
-                                </div>
-
-                                <div className='h-fit'>
                                     <div className='font-bold'>Language</div>
                                     <div>{record.language ? record.language : "-"}</div>
                                 </div>
@@ -216,6 +214,11 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                                 <div className='h-fit'>
                                     <div className='font-bold'>Rights</div>
                                     <div>{record.rights ? record.rights : "-"}</div>
+                                </div>
+
+                                <div className='h-fit'>
+                                    <div className='font-bold'>Source</div>
+                                    <div className='overflow-ellipsis'>{record.source ? record.source : "-"}</div>
                                 </div>
 
                             </div>

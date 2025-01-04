@@ -10,7 +10,8 @@ export async function POST(request: NextRequest) {
             },
             include: {
                 collection: true,
-                user: true
+                user: true,
+                files: true
             }
         })
 

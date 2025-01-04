@@ -12,7 +12,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({ contentType, url, file }) => 
     if (file) {
         // Image
         if (file.type.startsWith("image/")) {
-            return <Image src={URL.createObjectURL(file)} alt={file.name} width={450} height={0} />
+            return <Image src={URL.createObjectURL(file)} alt={file.name} width={450} height={0} className='w-fit h-auto rounded-lg' />
         // Audio
         } else if (file.type.startsWith("audio/")) {
             return (
@@ -34,7 +34,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({ contentType, url, file }) => 
     // File preview from URL of the uploaded file
     } else if (url) {
         // Image
-        if (contentType?.startsWith("image/")) return <Image src={url} alt={"Preview"} width={450} height={450} />
+        if (contentType?.startsWith("image/")) return <Image src={url} alt={"Preview"} width={450} height={450} className='w-fit h-auto rounded-lg' />
         // Audio
         if (contentType?.startsWith("audio/")) {
             return (

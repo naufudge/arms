@@ -1,18 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/prisma/db_client";
 import { Record } from "@prisma/client";
+import { UploadResponse } from "pinata";
+
+interface RecordCreateRequestBody {
+    recordData: Omit<Record, "id" | "files" | "deleteReqId" | "createdOn">;
+    uploadResponse: UploadResponse;
+}
 
 export async function POST(request: NextRequest) {
-    const reqBody: Omit<Record, "id"> = await request.json();
-    console.log(reqBody)
+    const { recordData, uploadResponse }: RecordCreateRequestBody = await request.json();
+    
     try {
-        const response = await prisma.record.create({
-            data: reqBody,
+        const recordResponse = await prisma.record.create({
+            data: recordData,
         });
+
+        if (!recordResponse) {
+            return NextResponse.json({
+                success: false,
+                error: "Failed to create record"
+            })
+        }
+
+        const fileResponse = await prisma.file.create({
+            data: {
+                id: uploadResponse.cid,
+                name: uploadResponse.name,
+                type: uploadResponse.mime_type,
+                size: uploadResponse.size,
+                recordId: recordResponse.id,
+            }
+        })
         
         return NextResponse.json({
             success: true,
-            data: response
+            record: recordResponse,
+            file: fileResponse
         })
 
     } catch (error: unknown) {
@@ -25,6 +49,7 @@ export async function POST(request: NextRequest) {
     }
 }
 
+// Fetch all records
 export async function GET() {
     try {
         const response = await prisma.record.findMany({
