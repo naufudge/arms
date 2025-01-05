@@ -88,9 +88,9 @@ export default function Home() {
       {records && collections && users ?
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="flex flex-col gap-8">
-            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-10">
               <DashboardCard title="Records" icon={<FolderUp className="text-green-600" />} content={records?.length.toString()} />
-              <DashboardCard title="Collections" icon={<LibraryBig className="text-orange-600" />} content={collections?.length.toString()} />
+              {/* <DashboardCard title="Collections" icon={<LibraryBig className="text-orange-600" />} content={collections?.length.toString()} /> */}
               <DashboardCard title="Users" icon={<Users className="text-yellow-600" />} content={users?.length.toString()} />
             </div>
             

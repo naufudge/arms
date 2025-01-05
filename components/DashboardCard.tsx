@@ -13,7 +13,7 @@ interface DashboardCardTypes {
 
 const DashboardCard: React.FC<DashboardCardTypes> = ({ title, icon, content }) => {
   return (
-    <Card className='h-[150px]'>
+    <Card className='h-[120px]'>
         <CardHeader>
             <div className="flex justify-between md:flex-col lg:flex-row">
                 <h3 className="font-light text-sm md:text-md">{title}</h3>
