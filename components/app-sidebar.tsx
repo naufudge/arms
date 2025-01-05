@@ -8,7 +8,7 @@ import {
     SidebarHeader,
     SidebarRail,
 } from "@/components/ui/sidebar"
-import { Home, Search, Settings, Upload, Users } from 'lucide-react'
+import { Delete, Home, Search, Settings, Trash, Upload, Users } from 'lucide-react'
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import axios from 'axios';
@@ -30,6 +30,11 @@ const menuItems = [
         title: "Upload",
         url: "/upload",
         icon: Upload
+    },
+    {
+        title: "Delete Requests",
+        url: "/delete",
+        icon: Trash
     },
     {
         title: "Users",

@@ -28,7 +28,13 @@ const colors = [
   "#A16AE8",
   "#4120A9",
   "#A1A9FE",
+  "#6F2DA8",
+  "#DA70D6",
+  "#9966CC",
   "#F6D4D2",
+  "#E6E6FA",
+  "#DDA0DD",
+  "#D8BFD8",
 ]
 
 function createChartConfig(data: Collection[]): ChartConfig {
@@ -57,11 +63,9 @@ export function RecordsChart({ collections, recordsData }: RecordChartProps) {
 
   useEffect(() => {
     if (!chartConfig) {
-      console.log(createChartConfig(collections))
       setChartConfig(createChartConfig(collections))
     }
     if (!dataSet) {
-      console.log(getFormattedDataset(collections, recordsData))
       setDataSet(getFormattedDataset(collections, recordsData))
     }
   }, [chartConfig, dataSet, collections, recordsData])

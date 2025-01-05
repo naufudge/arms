@@ -24,13 +24,13 @@ export async function middleware(request: NextRequest) {
  
 export const config = {
     matcher: [
-        // '/',
-        // '/login',
-        // '/settings',
-        // '/settings/roles',
-        // '/settings/collections',
-        // '/search',
-        // '/upload',
-        // '/users',
+        '/',
+        '/login',
+        '/settings',
+        '/settings/roles',
+        '/settings/collections',
+        '/search',
+        '/upload',
+        '/users',
     ],
   }

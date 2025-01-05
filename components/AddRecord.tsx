@@ -186,7 +186,7 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
             control={form.control}
             name="date"
             render={({ field }) => (
-              <FormItem className='flex flex-col justify-start gap-1'>
+              <FormItem>
                 <FormLabel>Date</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -230,7 +230,7 @@ const AddRecord: React.FC<AddRecordProps> = ({ uploading, uploadFile, selectedCo
             control={form.control}
             name="type"
             render={({ field }) => (
-              <FormItem className='flex flex-col justify-start gap-1'>
+              <FormItem>
                 <FormLabel>Type</FormLabel>
                 <FormControl>
                   <Input placeholder="Type" {...field} />

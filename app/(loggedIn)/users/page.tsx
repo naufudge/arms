@@ -183,7 +183,7 @@ const Page = () => {
   }
 
   const handleDisableEnableLoginClick = (state: boolean) => {
-    
+    return state
   }
 
   return (
@@ -290,7 +290,7 @@ const Page = () => {
                               <BadgeCheck />
                               :
                               <Ban
-                                onClick={() => { }}
+                                onClick={() => handleDisableEnableLoginClick(false)}
                                 className='hover:cursor-pointer hover:text-primary text-stone-600 transition-all duration-200'
                               />
                             }

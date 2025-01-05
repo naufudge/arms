@@ -1,4 +1,6 @@
-import React, { Dispatch, SetStateAction } from 'react';
+'use client';
+
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -7,11 +9,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { FullRecord, recordFormSchema } from '@/lib/MyTypes';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useToast } from "@/hooks/use-toast";
+import axios from 'axios';
 import RecordForm from './RecordForm';
 
 
@@ -48,7 +51,7 @@ const EditRecord: React.FC<EditRecordProps> = ({ open, setOpen, record }) => {
             creator: record.creator,
             publisher: record.publisher ? record.publisher : "",
             contributor: record.contributor ? record.contributor : "",
-            date: record.date,
+            date: new Date(record.date),
             type: record.type,
             format: record.format ? record.format : "",
             identifier: record.identifier ? record.identifier : "",
@@ -60,8 +63,28 @@ const EditRecord: React.FC<EditRecordProps> = ({ open, setOpen, record }) => {
         }
     })
 
-    async function onEditSubmit(values: z.infer<typeof recordFormSchema>) {
+    const { toast } = useToast() 
+    const [loading, setLoading] = useState(false)
 
+    async function onEditSubmit(values: z.infer<typeof recordFormSchema>) {
+        try {
+            setLoading(true)
+            const response = await axios.post("/api/record/update", {id: record.id, data: values} )
+            if (response.data.success) {
+                toast({
+                    title: "Success",
+                    description: "Successfully edited the record!",
+                })
+            }
+        } catch (error: unknown) {
+            toast({
+                title: "Error",
+                description: "Encountered an error while editing the record.",
+            })
+        } finally { 
+            setLoading(false)
+            setOpen(false)
+        }
     }
 
     return (
@@ -74,8 +97,7 @@ const EditRecord: React.FC<EditRecordProps> = ({ open, setOpen, record }) => {
                     </DialogDescription>
                 </DialogHeader>
                 <div className="max-h-screen">
-                    <RecordForm form={form} onSubmit={onEditSubmit} />
-
+                    <RecordForm form={form} onSubmit={onEditSubmit} uploading={loading} />
                 </div>
                 <DialogFooter />
             </DialogContent>

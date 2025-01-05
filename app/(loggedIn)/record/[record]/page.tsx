@@ -31,7 +31,6 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
 
     const [editRecordOpen, setEditRecordOpen] = useState(false);
 
-
     const isMobile = useIsMobile();
 
     useEffect(() => {
@@ -52,7 +51,6 @@ const RecordPage = ({ params }: { params: Promise<RecordPageProps> }) => {
                         if (fileResponse.data.success) {
                             setFileUrl(fileResponse.data.file)
                             setContentType(fileResponse.data.contentType)
-                            console.log(fileResponse.data)
                         }
                     }
                     return
