@@ -25,6 +25,15 @@ export type FullRecord = Record & {
     collection: Collection
 }
 
+export type FilterDataType = {
+    title: string,
+    creator: string,
+    collection: string,
+    date: Date | undefined,
+    uploaded: Date | undefined,
+    user: string,
+}
+
 export const recordFormSchema = z.object({
     title: z.string().min(5, { message: "Title must be between 5 to 50 characters" }).max(50),
     subject: z.string(),
@@ -41,4 +50,5 @@ export const recordFormSchema = z.object({
     relation: z.string(),
     coverage: z.string(),
     rights: z.string().min(5).max(50),
-  })
+})
+
