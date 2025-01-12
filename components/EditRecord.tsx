@@ -76,7 +76,7 @@ const EditRecord: React.FC<EditRecordProps> = ({ open, setOpen, record }) => {
                     description: "Successfully edited the record!",
                 })
             }
-        } catch (error: unknown) {
+        } catch {
             toast({
                 title: "Error",
                 description: "Encountered an error while editing the record.",

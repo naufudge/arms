@@ -17,11 +17,11 @@ import {
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { DeleteRequest, Record, User } from '@prisma/client';
-import axios from 'axios';
 import { capitalizeFirstLetter, getFormattedDate } from '@/utils/Helpers';
 import { Check, Loader2, X } from 'lucide-react';
 import Link from 'next/link';
 import ConfirmationPopup from '@/components/ConfirmationPopup';
+import axios from 'axios';
 
 type FullDeleteRequest = DeleteRequest & {
     record: Record,

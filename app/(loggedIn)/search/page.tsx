@@ -94,9 +94,9 @@ const Page = () => {
         }
     };
 
-    const handleFilter = () => {
+    // const handleFilter = () => {
 
-    }
+    // }
 
     return (
         <div className="font-poppins w-full">

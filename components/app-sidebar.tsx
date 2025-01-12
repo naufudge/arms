@@ -8,7 +8,7 @@ import {
     SidebarHeader,
     SidebarRail,
 } from "@/components/ui/sidebar"
-import { Delete, Home, Search, Settings, Trash, Upload, Users } from 'lucide-react'
+import { Home, Search, Settings, Trash, Upload, Users } from 'lucide-react'
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import axios from 'axios';

@@ -1,7 +1,5 @@
-import { getDataFromToken } from "@/lib/jwt";
 import { prisma } from "@/prisma/db_client";
 import { DeleteRequest } from "@prisma/client";
-import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 interface DeleteRequestBody {

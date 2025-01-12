@@ -6,7 +6,7 @@ import { UserTokenType } from "@/lib/MyTypes";
 import { getFormattedDate, getGreeting } from "@/utils/Helpers";
 import { Collection, Record } from "@prisma/client";
 import axios from "axios";
-import { FolderUp, LibraryBig, Loader2, Users } from "lucide-react";
+import { FolderUp, Loader2, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Table,

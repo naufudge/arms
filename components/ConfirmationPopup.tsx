@@ -20,7 +20,7 @@ interface ConfirmationPopupProps extends AlertDialogContentProps {
     proceed: () => Promise<void>;
 }
 
-const ConfirmationPopup: React.FC<ConfirmationPopupProps> = ({ open, setOpen, description, user, proceed, ...props }) => {
+const ConfirmationPopup: React.FC<ConfirmationPopupProps> = ({ open, setOpen, description, proceed, ...props }) => {
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogContent {...props}>

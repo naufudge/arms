@@ -18,7 +18,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useState } from "react"
-import ConfirmationPopup from "@/components/ConfirmationPopup"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
