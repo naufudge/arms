@@ -15,21 +15,36 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 import { DeleteRequest, Record, User } from '@prisma/client';
 import axios from 'axios';
 import { capitalizeFirstLetter, getFormattedDate } from '@/utils/Helpers';
-import { Check, Cross, Loader2, X } from 'lucide-react';
+import { Check, Loader2, X } from 'lucide-react';
+import Link from 'next/link';
+import ConfirmationPopup from '@/components/ConfirmationPopup';
 
 type FullDeleteRequest = DeleteRequest & {
     record: Record,
     reqUser: User,
-    approveUser: User
+    approveUser?: User
 }
 
 const DeleteRequestPage = () => {
+    const [user, setUser] = useState<User>()
+    const [showConfirmation, setShowConfirmation] = useState(false)
+    const [selectedRequest, setSelectedRequest] = useState<FullDeleteRequest>()
     const [deleteRequests, setDeleteRequests] = useState<FullDeleteRequest[]>()
 
     useEffect(() => {
+        async function getUser() {
+            try {
+                const response = await axios.get("/api/user/me")
+                if (response.data.success) setUser(response.data.user)
+            } catch (error: unknown) {
+                const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
+                console.log(errorMessage)
+            }
+        }
         async function getDeleteRequests() {
             try {
                 const response = await axios.get("/api/record/delete")
@@ -40,8 +55,31 @@ const DeleteRequestPage = () => {
             }
         }
 
-        if (!deleteRequests) getDeleteRequests()
-    }, [deleteRequests])
+        if (!deleteRequests) getDeleteRequests();
+        if (!user) getUser();
+    }, [deleteRequests, user])
+
+
+    const handleDeleteApproval = async (deleteRequest: FullDeleteRequest, status: boolean) => {
+        try {
+            if (status === true && user) {
+                const data = {
+                    type: "approve",
+                    deleteRequest: {...deleteRequest, approveUserId: user.id}
+                }
+                const response = await axios.post("/api/record/delete", data)
+                console.log(response.data)
+            } else {
+
+            }
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
+            console.log(errorMessage)
+        } finally {
+            setSelectedRequest(undefined)
+            location.reload()
+        }
+    }
 
     return (
         <div className='font-poppins'>
@@ -52,6 +90,15 @@ const DeleteRequestPage = () => {
 
             <br />
 
+            {selectedRequest && 
+                <ConfirmationPopup
+                    open={showConfirmation}
+                    setOpen={setShowConfirmation}
+                    proceed={() => handleDeleteApproval(selectedRequest, true)}
+                    description='Approve the deletion of this record?'
+                />
+            }
+
             {deleteRequests ?
                 <Table>
                     <TableHeader>
@@ -59,30 +106,50 @@ const DeleteRequestPage = () => {
                             <TableHead>#</TableHead>
                             <TableHead>Record Title</TableHead>
                             <TableHead>Requested by</TableHead>
-                            <TableHead>Date</TableHead>
+                            <TableHead>Approved by</TableHead>
+                            <TableHead>Request Date</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {deleteRequests.map((request, index) => (
+                        {deleteRequests.reverse().map((request, index) => (
                             <TableRow key={index}>
                                 <TableCell>{index + 1}</TableCell>
-                                <TableCell className="font-medium">{request.record.title}</TableCell>
+                                <TableCell className="font-medium">
+                                    {request.recordId ? 
+                                        <Link className='hover:underline hover:text-stone-500' href={`/record/${request.recordId}`}>{request.record.title}</Link>
+                                    :
+                                        <div className='italic text-stone-500'>Deleted Record</div>
+                                    }
+                                </TableCell>
+
                                 <TableCell>{capitalizeFirstLetter(request.reqUser.username)}</TableCell>
+
+                                <TableCell>
+                                    {request.approveUser ?
+                                        capitalizeFirstLetter(request.approveUser.username)
+                                        :
+                                        "N/A"
+                                    }
+                                </TableCell>
+
                                 <TableCell>{getFormattedDate(request.createdOn)}</TableCell>
                                 {/* Actions */}
                                 <TableCell>
                                     <div className='flex gap-5'>
-                                        {request.approved ? 
-                                            <>Approved</>
-                                        :
+                                        {request.approved ?
+                                            <Badge>Approved</Badge>
+                                            :
                                             <>
                                                 {/* Approve Button */}
                                                 <TooltipProvider>
                                                     <Tooltip>
                                                         <TooltipTrigger>
                                                             <Check
-                                                                onClick={() => { }}
+                                                                onClick={() => {
+                                                                    setSelectedRequest(request)
+                                                                    setShowConfirmation(true)
+                                                                }}
                                                                 className='hover:cursor-pointer hover:text-primary text-stone-600 transition-all duration-200'
                                                             />
                                                         </TooltipTrigger>
