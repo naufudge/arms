@@ -18,6 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useState } from "react"
+import ConfirmationPopup from "@/components/ConfirmationPopup"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -27,8 +28,9 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {  
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
+
 
   const table = useReactTable({
     data,
@@ -43,6 +45,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="rounded-md border">
+      
       <Table>
         <TableHeader className="bg-secondary">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -53,9 +56,9 @@ export function DataTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 )
               })}

@@ -13,7 +13,7 @@ import { AlertDialogContentProps } from '@radix-ui/react-alert-dialog';
 import { User } from '@prisma/client';
 
 interface ConfirmationPopupProps extends AlertDialogContentProps {
-    open: boolean; 
+    open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     description: string;
     user?: User;
@@ -28,21 +28,24 @@ const ConfirmationPopup: React.FC<ConfirmationPopupProps> = ({ open, setOpen, de
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>{description}</AlertDialogDescription>
                 </AlertDialogHeader>
-                
+
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    {
-                        user ? 
+                    {/* {
+                        user ?
                             <AlertDialogAction onClick={() => proceed()}>
                                 Continue
                             </AlertDialogAction>
-                    :
+                            :
+                            <AlertDialogAction onClick={proceed}>
+                                Continue
+                            </AlertDialogAction>
+                    } */}
                     <AlertDialogAction onClick={proceed}>
                         Continue
                     </AlertDialogAction>
-                }
                 </AlertDialogFooter>
-                    
+
             </AlertDialogContent>
         </AlertDialog>
 

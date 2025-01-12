@@ -1,9 +1,10 @@
 "use client"
 
-import { Record } from "@prisma/client"
+import { useEffect, useState } from "react"
+import { Record, User } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, Eye, MoreHorizontal, Trash2 } from "lucide-react"
- 
+
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -15,6 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { getFormattedDate } from "@/utils/Helpers"
+import ConfirmationPopup from "@/components/ConfirmationPopup"
+import axios from "axios"
 
 export const columns: ColumnDef<Record>[] = [
   {
@@ -49,7 +52,7 @@ export const columns: ColumnDef<Record>[] = [
           className="p-0"
         >
           #
-          <ArrowUpDown className="" />
+          <ArrowUpDown />
         </Button>
       )
     },
@@ -68,7 +71,7 @@ export const columns: ColumnDef<Record>[] = [
         </Button>
       )
     },
-    
+
   },
   {
     accessorKey: "date",
@@ -105,30 +108,74 @@ export const columns: ColumnDef<Record>[] = [
     header: "",
     cell: ({ row }) => {
       const record = row.original
- 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {/* <DropdownMenuItem
-              onClick={() => {}}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator /> */}
-            <Link href={`/record/${record.id}`}>
-              <DropdownMenuItem className="hover:cursor-pointer"><Eye /> View Record</DropdownMenuItem>
-            </Link>
+      const [showDeleteRequestConfirmation, setShowDeleteRequestConfirmation] = useState(false);
+      const [user, setUser] = useState<User>()
 
-            <DropdownMenuItem className="text-red-500 focus:text-red-500 hover:cursor-pointer"><Trash2 /> Request Deletion</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      useEffect(() => {
+        async function getUser() {
+          try {
+            const response = await axios.get("/api/user/me")
+            if (response.data.success) setUser(response.data.user)
+          } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
+            console.log(errorMessage)
+          }
+        }
+        if (!user) getUser();
+      }, [user])
+
+      const handleDeleteRequest =  async () => {
+        if (!user) return
+
+        const data = {
+          type: "request",
+          deleteRequest: {
+            reason: "",
+            recordId: record.id,
+            reqUserId: user.id
+          }
+        }
+
+        try {
+          const response = await axios.post("/api/record/delete", data)
+          console.log(response.data)
+          
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
+          console.log(errorMessage)
+        }
+      }
+
+      return (
+        <>
+          <ConfirmationPopup
+            open={showDeleteRequestConfirmation}
+            setOpen={setShowDeleteRequestConfirmation}
+            description={`Would you like to request the deletion of this record: ${record.title}`}
+            proceed={handleDeleteRequest}
+          />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+              <Link href={`/record/${record.id}`}>
+                <DropdownMenuItem className="hover:cursor-pointer"><Eye /> View Record</DropdownMenuItem>
+              </Link>
+
+              <DropdownMenuItem onClick={() => setShowDeleteRequestConfirmation(true)} className="text-red-500 focus:text-red-500 hover:cursor-pointer">
+                <Trash2 /> Request Deletion
+              </DropdownMenuItem>
+
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
       )
     },
   },

@@ -36,8 +36,7 @@ model Record {
   user User @relation(fields: [userId], references: [id])
   collectionId Int
   collection Collection @relation(fields: [collectionId], references: [id])
-  deleteReq DeleteRequest? @relation(fields: [deleteReqId], references: [id])
-  deleteReqId Int? @unique
+  deleteReq DeleteRequest? @relation
 }
 
 model User {
@@ -85,7 +84,8 @@ model DeleteRequest {
   reason String
   approved Boolean @default(false)
   createdOn DateTime @default(now())
-  record Record? @relation
+  record Record? @relation(fields: [recordId], references: [id])
+  recordId Int? @unique
   reqUser User @relation(name: "RequestUser", fields: [reqUserId], references: [id])
   reqUserId String
   approveUser User? @relation(name: "ApproveUser", fields: [approveUserId], references: [id])
