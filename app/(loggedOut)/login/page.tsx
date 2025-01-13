@@ -12,7 +12,6 @@ import {
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-// import { User } from '@prisma/client';
 import { AlertBar } from '@/components/Alerts';
 import axios from 'axios';
 
@@ -25,8 +24,6 @@ const Page = () => {
     const [alertType, setAlertType] = useState<"success" | "error">("error")
     const [alertTitle, setAlertTitle] = useState("")
     const [alertDescription, setAlertDescription] = useState("")
-
-    // const [user, setUser] = useState<User | null | undefined>()
 
     const [showPassChange, setShowPassChange] = useState(false)
 
@@ -65,7 +62,6 @@ const Page = () => {
                 return
             } else if (response.data.success === true && response.data.passChange === false) {
                 // if the username and password is correct, and the user doesn't need to change their password
-                // setUser(response.data.user)
                 const loginResponse = await axios.post("/api/user/login", { username, password })
                 if (loginResponse.data.success === true) {
                     showSuccess()
@@ -76,7 +72,6 @@ const Page = () => {
                 return;
             } else if (response.data.success === true && response.data.passChange === true) {
                 // if the username and password is correct, and the user has to change their password
-                // setUser(response.data.user)
                 setShowAlert(false)
                 setShowPassChange(true)
                 return
@@ -157,7 +152,7 @@ const Page = () => {
                     <Card className='px-5 pt-3 flex flex-col gap-3'>
                         <AlertBar title={alertTitle} description={alertDescription} alertType={alertType} className={`${showAlert ? "" : "hidden"} w-full mt-4 max-w-[340px]`} />
                         <CardHeader className='flex flex-col gap-2'>
-                            <CardTitle><h1 className='font-bold text-[2.5rem]'>Login</h1></CardTitle>
+                            <CardTitle><h1 className='font-bold text-[2.5rem]'>Login to ARMS</h1></CardTitle>
 
                             <CardDescription>Welcome Back! Please enter your details.</CardDescription>
                         </CardHeader>
